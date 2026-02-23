@@ -18,7 +18,7 @@ body {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
     color: white;
     padding: 60px 20px;
     text-align: center;
@@ -53,18 +53,18 @@ body {
 }
 
 .btn-primary {
-    background-color: #ff6b35;
+    background-color: #8b6914;
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: #e55a2b;
+    background-color: #6d5110;
     transform: translateY(-2px);
 }
 
 .btn-secondary {
     background-color: white;
-    color: #1e3c72;
+    color: #8b6914;
 }
 
 .btn-secondary:hover {
@@ -82,7 +82,7 @@ body {
     text-align: center;
     font-size: 2.2rem;
     margin-bottom: 50px;
-    color: #1e3c72;
+    color: #8b6914;
 }
 
 .mission-content {
@@ -100,13 +100,13 @@ body {
 
 .mission-text h3 {
     font-size: 1.8rem;
-    color: #1e3c72;
+    color: #8b6914;
     margin-bottom: 25px;
 }
 
 .mission-text h4 {
     font-size: 1.2rem;
-    color: #2a5298;
+    color: #a67c1b;
     margin-top: 20px;
     margin-bottom: 10px;
     font-weight: 600;
@@ -128,7 +128,7 @@ body {
     text-align: center;
     font-size: 2.2rem;
     margin-bottom: 50px;
-    color: #1e3c72;
+    color: #8b6914;
 }
 
 .contact-grid {
@@ -142,7 +142,7 @@ body {
 .contact-info h3,
 .contact-form h3 {
     font-size: 1.5rem;
-    color: #1e3c72;
+    color: #8b6914;
     margin-bottom: 20px;
 }
 
@@ -155,17 +155,17 @@ body {
 .contact-details {
     margin-top: 30px;
     padding: 20px;
-    background-color: #f8f9fa;
+    background-color: #faf6e8;
     border-radius: 8px;
 }
 
 .contact-details h4 {
-    color: #1e3c72;
+    color: #8b6914;
     margin-bottom: 15px;
 }
 
 .contact-details a {
-    color: #2a5298;
+    color: #a67c1b;
     text-decoration: none;
 }
 
@@ -203,7 +203,7 @@ body {
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #2a5298;
+    border-color: #a67c1b;
 }
 
 .contact-form button {
@@ -214,7 +214,7 @@ body {
 
 /* Footer */
 footer {
-    background-color: #1e3c72;
+    background-color: #8b6914;
     color: white;
     padding: 30px 20px;
     text-align: center;
