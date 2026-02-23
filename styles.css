@@ -18,7 +18,10 @@ body {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('big_banner.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: white;
     padding: 60px 20px;
     text-align: center;
