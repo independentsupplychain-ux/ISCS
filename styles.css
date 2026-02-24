@@ -23,11 +23,19 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     color: white;
-    padding: 120px 20px;
+    padding: 120px 20px 60px 20px;
     text-align: center;
-    min-height: 400px;
+    min-height: 500px;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
+}
+
+.hero .container {
+    width: 100%;
+}
+
+.hero-content {
+    padding-bottom: 40px;
 }
 
 .hero h1 {
