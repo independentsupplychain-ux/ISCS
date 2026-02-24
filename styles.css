@@ -55,6 +55,7 @@ body {
     gap: 15px;
     justify-content: center;
     flex-wrap: wrap;
+    margin-left: 20%;
 }
 
 .btn {
