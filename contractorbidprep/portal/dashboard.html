@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bid Dashboard — Contractors Bid Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+
+  <div class="dashboard-layout">
+
+    <!-- ===== HEADER ===== -->
+    <header class="dash-header">
+      <div class="dash-header-inner">
+        <div class="dash-logo">
+          <img src="../assets/logo.png" alt="CBP" onerror="this.style.display='none'" />
+          <span class="dash-logo-text">Contractors<br>Bid Prep</span>
+        </div>
+        <div class="dash-user">
+          <span id="user-name-display">Loading...</span>
+          <div class="dash-avatar" id="user-avatar">?</div>
+          <button
+            onclick="logout()"
+            style="background:none;border:none;color:rgba(255,255,255,0.5);
+                   font-size:0.8rem;cursor:pointer;margin-left:0.5rem;font-family:inherit;"
+          >Sign out</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main class="dash-main">
+
+      <!-- Welcome -->
+      <div class="dash-welcome">
+        <h1>Good to see you, <span id="welcome-name" class="text-gold">—</span></h1>
+        <p>Here are your active bid opportunities pulled live from the BidBuddy database.</p>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stat-cards" id="stat-cards">
+        <div class="stat-card">
+          <p class="stat-card-label">Total Bids</p>
+          <p class="stat-card-value" id="stat-total">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-card-label">Submitted</p>
+          <p class="stat-card-value gold" id="stat-submitted">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-card-label">Pending</p>
+          <p class="stat-card-value" id="stat-pending">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-card-label">No Response</p>
+          <p class="stat-card-value" id="stat-no-response">—</p>
+        </div>
+      </div>
+
+      <!-- Bid Table -->
+      <div class="bids-section">
+        <div class="bids-header">
+          <h2>Bid Opportunities</h2>
+          <button class="bids-refresh" id="refresh-btn" onclick="loadBids()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            Refresh
+          </button>
+        </div>
+
+        <div id="bids-body">
+          <!-- Loading state -->
+          <div class="bids-loading" id="loading-state">
+            <div class="spinner"></div>
+            <p>Loading your bid data...</p>
+          </div>
+
+          <!-- Table (hidden until data loads) -->
+          <table class="bids-table" id="bids-table" style="display:none;">
+            <thead>
+              <tr>
+                <th>Opportunity</th>
+                <th>Agency</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody id="bids-tbody"></tbody>
+          </table>
+
+          <!-- Empty state -->
+          <div class="bids-empty" id="empty-state" style="display:none;">
+            <p style="font-size:2rem;margin-bottom:0.5rem;">&#x1F4CB;</p>
+            <p style="font-weight:600;color:#374151;">No bids found</p>
+            <p style="font-size:0.875rem;margin-top:0.25rem;">
+              New opportunities will appear here as soon as the weekly scan runs.
+            </p>
+          </div>
+
+          <!-- Error state -->
+          <div class="bids-empty" id="error-state" style="display:none;">
+            <p style="font-size:2rem;margin-bottom:0.5rem;">&#x26A0;&#xFE0F;</p>
+            <p style="font-weight:600;color:#374151;" id="error-msg">Could not load bids</p>
+            <p style="font-size:0.875rem;margin-top:0.25rem;">
+              <button onclick="loadBids()" style="color:#C9A84C;background:none;border:none;
+              cursor:pointer;font-size:0.875rem;font-family:inherit;font-weight:600;">
+                Try again
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin-top:1.5rem;font-size:0.8rem;color:#9CA3AF;text-align:center;">
+        Data refreshes automatically every Sunday. Last scan:
+        <span id="last-scan">—</span>
+      </p>
+
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="../js/dashboard.js"></script>
+</body>
+</html>
