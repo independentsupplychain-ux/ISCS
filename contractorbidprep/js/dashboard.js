@@ -1,7 +1,7 @@
 /* ============================================================
    Contractors Bid Prep — Dashboard JS
-   Handles auth guard, loads bid data from /api/cbp/bids,
-   renders the table and stat cards.
+   Loads open bid opportunities from /api/cbp/bids,
+   renders the table with "New This Week" badges and stat cards.
    ============================================================ */
 
 // ---- Auth guard ----
@@ -14,33 +14,46 @@ if (!auth || !contractor) {
 
 // ---- Populate header ----
 const firstName = contractor ? contractor.split(' ')[0] : '';
-document.getElementById('welcome-name').textContent    = firstName;
+document.getElementById('welcome-name').textContent      = firstName;
 document.getElementById('user-name-display').textContent = contractor || '';
-document.getElementById('user-avatar').textContent     = firstName ? firstName[0].toUpperCase() : '?';
+document.getElementById('user-avatar').textContent       = firstName ? firstName[0].toUpperCase() : '?';
 
-// ---- Status helpers ----
-const STATUS_CLASS = {
-  'submitted':   'status-submitted',
-  'pending':     'status-pending',
-  'no response': 'status-no-response',
-  'awarded':     'status-awarded',
-};
+// ---- Date helpers ----
+function today() {
+  return new Date().toISOString().slice(0, 10);  // "YYYY-MM-DD"
+}
 
-function statusClass(status) {
-  const key = (status || '').toLowerCase().trim();
-  return STATUS_CLASS[key] || 'status-no-response';
+function addDays(dateStr, n) {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
 }
 
 function formatDate(dateStr) {
   if (!dateStr) return '—';
-  const d = new Date(dateStr);
+  const d = new Date(dateStr + 'T00:00:00');
   if (isNaN(d)) return dateStr;
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function formatCurrency(val) {
-  if (val === null || val === undefined || val === '') return '—';
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+  if (val === null || val === undefined || val === '' || val === 0) return '—';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency', currency: 'USD', maximumFractionDigits: 0,
+  }).format(val);
+}
+
+// "New This Week" = First Seen within the last 7 days
+function isNewThisWeek(firstSeenStr) {
+  if (!firstSeenStr) return false;
+  const sevenDaysAgo = addDays(today(), -7);
+  return firstSeenStr >= sevenDaysAgo;
+}
+
+function isDueSoon(dueDateStr, days) {
+  if (!dueDateStr) return false;
+  const cutoff = addDays(today(), days);
+  return dueDateStr >= today() && dueDateStr <= cutoff;
 }
 
 // ---- Load bids ----
@@ -51,8 +64,7 @@ async function loadBids() {
   refreshBtn.classList.add('spinning');
 
   try {
-    const url = `/api/cbp/bids?contractor=${encodeURIComponent(contractor)}`;
-    const res  = await fetch(url);
+    const res = await fetch('/api/cbp/bids');
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -73,6 +85,7 @@ async function loadBids() {
   }
 }
 
+// ---- Render table ----
 function renderBids(bids) {
   if (!bids || bids.length === 0) {
     showState('empty');
@@ -83,22 +96,28 @@ function renderBids(bids) {
   tbody.innerHTML = '';
 
   bids.forEach(bid => {
+    const isNew = isNewThisWeek(bid.firstSeen);
+    const trades = Array.isArray(bid.tradeCategory) ? bid.tradeCategory : [];
+
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>
-        <div class="bid-title">${escHtml(bid.opportunity || 'Untitled Opportunity')}</div>
-        ${bid.bidAmount ? `<div class="bid-agency">Bid: ${formatCurrency(bid.bidAmount)}</div>` : ''}
+        <div class="bid-title-cell">
+          ${bid.portalLink
+            ? `<a href="${escHtml(bid.portalLink)}" target="_blank" rel="noopener" class="bid-title-link">${escHtml(bid.opportunity || 'Untitled Opportunity')}</a>`
+            : `<span class="bid-title">${escHtml(bid.opportunity || 'Untitled Opportunity')}</span>`
+          }
+          ${isNew ? '<span class="new-badge">New This Week</span>' : ''}
+        </div>
       </td>
-      <td>
-        <div>${escHtml(bid.agency || '—')}</div>
-      </td>
+      <td>${escHtml(bid.agency || '—')}</td>
       <td>${formatDate(bid.dueDate)}</td>
+      <td>${formatCurrency(bid.estimatedValue)}</td>
       <td>
-        <span class="status-pill ${statusClass(bid.status)}">
-          ${escHtml(bid.status || 'Unknown')}
-        </span>
+        <div class="trade-pills">
+          ${trades.map(t => `<span class="trade-pill">${escHtml(t)}</span>`).join('')}
+        </div>
       </td>
-      <td>${escHtml(bid.source || '—')}</td>
     `;
     tbody.appendChild(row);
   });
@@ -106,18 +125,26 @@ function renderBids(bids) {
   showState('table');
 }
 
+// ---- Stat cards ----
 function updateStats(bids) {
-  const counts = { submitted: 0, pending: 0, 'no response': 0 };
+  const t = today();
+  const in7  = addDays(t, 7);
+  const in30 = addDays(t, 30);
+
+  let newCount      = 0;
+  let dueSoon7      = 0;
+  let dueSoon30     = 0;
 
   bids.forEach(b => {
-    const key = (b.status || '').toLowerCase().trim();
-    if (counts[key] !== undefined) counts[key]++;
+    if (isNewThisWeek(b.firstSeen)) newCount++;
+    if (isDueSoon(b.dueDate, 7))  dueSoon7++;
+    if (isDueSoon(b.dueDate, 30)) dueSoon30++;
   });
 
-  document.getElementById('stat-total').textContent       = bids.length;
-  document.getElementById('stat-submitted').textContent   = counts['submitted'];
-  document.getElementById('stat-pending').textContent     = counts['pending'];
-  document.getElementById('stat-no-response').textContent = counts['no response'];
+  document.getElementById('stat-total').textContent     = bids.length;
+  document.getElementById('stat-new').textContent       = newCount;
+  document.getElementById('stat-due-soon').textContent  = dueSoon7;
+  document.getElementById('stat-due-month').textContent = dueSoon30;
 }
 
 function updateLastScan() {

@@ -708,13 +708,54 @@ p { font-size: 1rem; color: #4B5563; }
 }
 .toast.error { background: #DC2626; }
 
+/* ---- Bid title cell (title + New badge inline) ---- */
+.bid-title-cell { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; }
+.bid-title-link {
+  font-weight: 600;
+  color: var(--navy);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.bid-title-link:hover { color: var(--gold-dark); text-decoration: underline; }
+
+/* ---- "New This Week" badge ---- */
+.new-badge {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--navy-dark);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* ---- Trade category pills ---- */
+.trade-pills { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.trade-pill {
+  display: inline-block;
+  background: #EFF6FF;
+  color: #1D4ED8;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
   .nav-links { display: none; }
   .pricing-grid { grid-template-columns: 1fr; }
   .plan-card.featured { transform: none; }
-  .bids-table th:nth-child(3),
-  .bids-table td:nth-child(3) { display: none; }
+  /* Hide Est. Value and Trade on small screens */
+  .bids-table th:nth-child(4),
+  .bids-table td:nth-child(4),
+  .bids-table th:nth-child(5),
+  .bids-table td:nth-child(5) { display: none; }
   .stat-cards { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 480px) {
