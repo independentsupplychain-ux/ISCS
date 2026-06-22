@@ -1,1 +1,13 @@
-{}
+{
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/portal/:token",
+      "destination": "/portal/bid-portal.html"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+    "$schema": "https://apify.com/schemas/v1/actor.ide.json",
+    "actorSpecification": 1,
+    "name": "demandstar-gulf-coast-scraper",
+    "title": "DemandStar Gulf Coast Bid Scraper",
+    "description": "Logs in to DemandStar, fetches active FL/AL bids via the search API, filters to Gulf Coast agencies.",
+    "version": "0.0",
+    "input": "./input_schema.json",
+    "dockerfile": "../Dockerfile"
+}

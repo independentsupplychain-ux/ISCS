@@ -1,32 +1,17 @@
 /* ============================================================
    Contractors Bid Prep — Dashboard JS
-   Loads open bid opportunities from /api/cbp/bids,
-   renders the table with "New This Week" badges and stat cards.
+   Reads ?token= from URL, calls /api/cbp/portal-data,
+   renders opportunities, bid history (Gold), and subscription mgmt.
    ============================================================ */
 
-// ---- Auth guard ----
-const contractor = sessionStorage.getItem('cbp_contractor');
-const auth       = sessionStorage.getItem('cbp_auth');
+// ---- Helpers ----
 
-if (!auth || !contractor) {
-  window.location.replace('login.html');
-}
-
-// ---- Populate header ----
-const firstName = contractor ? contractor.split(' ')[0] : '';
-document.getElementById('welcome-name').textContent      = firstName;
-document.getElementById('user-name-display').textContent = contractor || '';
-document.getElementById('user-avatar').textContent       = firstName ? firstName[0].toUpperCase() : '?';
-
-// ---- Date helpers ----
-function today() {
-  return new Date().toISOString().slice(0, 10);  // "YYYY-MM-DD"
-}
-
-function addDays(dateStr, n) {
-  const d = new Date(dateStr);
-  d.setDate(d.getDate() + n);
-  return d.toISOString().slice(0, 10);
+function escHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function formatDate(dateStr) {
@@ -37,145 +22,161 @@ function formatDate(dateStr) {
 }
 
 function formatCurrency(val) {
-  if (val === null || val === undefined || val === '' || val === 0) return '—';
+  if (val === null || val === undefined || val === '') return '—';
   return new Intl.NumberFormat('en-US', {
     style: 'currency', currency: 'USD', maximumFractionDigits: 0,
   }).format(val);
 }
 
-// "New This Week" = First Seen within the last 7 days
-function isNewThisWeek(firstSeenStr) {
-  if (!firstSeenStr) return false;
-  const sevenDaysAgo = addDays(today(), -7);
-  return firstSeenStr >= sevenDaysAgo;
+function statusBadge(status) {
+  if (!status) return '';
+  const cls = status === 'Submitted'     ? 'status-submitted'
+             : status === 'Review Needed' ? 'status-review'
+             : 'status-no-response';
+  return `<span class="status-badge ${cls}">${escHtml(status)}</span>`;
 }
 
-function isDueSoon(dueDateStr, days) {
-  if (!dueDateStr) return false;
-  const cutoff = addDays(today(), days);
-  return dueDateStr >= today() && dueDateStr <= cutoff;
+function showState(state) {
+  document.getElementById('state-loading').style.display = state === 'loading' ? 'flex'  : 'none';
+  document.getElementById('state-error').style.display   = state === 'error'   ? 'block' : 'none';
+  document.getElementById('state-content').style.display = state === 'content' ? 'block' : 'none';
 }
 
-// ---- Load bids ----
-async function loadBids() {
+// ---- Token ----
+
+const params = new URLSearchParams(window.location.search);
+const token  = params.get('token');
+
+// ---- Load portal data ----
+
+let stripeCustomerId = null;
+
+async function loadDashboard() {
   showState('loading');
 
-  const refreshBtn = document.getElementById('refresh-btn');
-  refreshBtn.classList.add('spinning');
-
-  try {
-    const res = await fetch('/api/cbp/bids');
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || `Server error ${res.status}`);
-    }
-
-    const { bids } = await res.json();
-    renderBids(bids);
-    updateStats(bids);
-    updateLastScan();
-
-  } catch (err) {
-    console.error('Dashboard load error:', err);
+  if (!token) {
     showState('error');
-    document.getElementById('error-msg').textContent = err.message || 'Could not load bids.';
-  } finally {
-    refreshBtn.classList.remove('spinning');
-  }
-}
-
-// ---- Render table ----
-function renderBids(bids) {
-  if (!bids || bids.length === 0) {
-    showState('empty');
     return;
   }
 
-  const tbody = document.getElementById('bids-tbody');
-  tbody.innerHTML = '';
+  try {
+    const res = await fetch(`/api/cbp/portal-data?token=${encodeURIComponent(token)}`);
 
-  bids.forEach(bid => {
-    const isNew = isNewThisWeek(bid.firstSeen);
-    const trades = Array.isArray(bid.tradeCategory) ? bid.tradeCategory : [];
+    if (res.status === 401) {
+      showState('error');
+      return;
+    }
 
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>
-        <div class="bid-title-cell">
-          ${bid.portalLink
-            ? `<a href="${escHtml(bid.portalLink)}" target="_blank" rel="noopener" class="bid-title-link">${escHtml(bid.opportunity || 'Untitled Opportunity')}</a>`
-            : `<span class="bid-title">${escHtml(bid.opportunity || 'Untitled Opportunity')}</span>`
-          }
-          ${isNew ? '<span class="new-badge">New This Week</span>' : ''}
+    if (!res.ok) {
+      throw new Error(`Server error ${res.status}`);
+    }
+
+    const { contractor, opportunities, threads } = await res.json();
+
+    stripeCustomerId = contractor.stripeCustomerId;
+
+    // Populate header
+    const firstName = (contractor.name || '').split(' ')[0];
+    document.getElementById('welcome-name').textContent      = firstName || contractor.name || '—';
+    document.getElementById('user-name-display').textContent = contractor.name || '';
+    document.getElementById('user-avatar').textContent       = firstName ? firstName[0].toUpperCase() : '?';
+
+    if (contractor.tier) {
+      document.getElementById('tier-badge-header').innerHTML =
+        `<span class="tier-badge">${escHtml(contractor.tier)}</span>`;
+    }
+
+    // Render opportunities
+    renderOpportunities(opportunities);
+
+    // Render bid history (Gold only)
+    if (threads && threads.length > 0) {
+      renderBidHistory(threads);
+      document.getElementById('bid-history-section').style.display = 'block';
+    }
+
+    showState('content');
+
+  } catch (err) {
+    console.error('Dashboard error:', err);
+    showState('error');
+  }
+}
+
+// ---- Render opportunities ----
+
+function renderOpportunities(opps) {
+  const container = document.getElementById('opps-container');
+
+  if (!opps || opps.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        No open opportunities match your trade and service area right now.
+        Check back after Sunday's scan.
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = opps.map(opp => `
+    <div class="opp-card">
+      <div class="opp-card-body">
+        <div class="opp-title">${escHtml(opp.title || 'Untitled Opportunity')}</div>
+        <div class="opp-meta">
+          <span>${escHtml(opp.agency || '—')}</span>
+          <span>Due: ${formatDate(opp.dueDate)}</span>
+          <span>Est. ${formatCurrency(opp.estimatedValue)}</span>
         </div>
-      </td>
-      <td>${escHtml(bid.agency || '—')}</td>
-      <td>${formatDate(bid.dueDate)}</td>
-      <td>${formatCurrency(bid.estimatedValue)}</td>
-      <td>
-        <div class="trade-pills">
-          ${trades.map(t => `<span class="trade-pill">${escHtml(t)}</span>`).join('')}
-        </div>
-      </td>
-    `;
-    tbody.appendChild(row);
-  });
-
-  showState('table');
+      </div>
+      ${opp.portalLink
+        ? `<a href="${escHtml(opp.portalLink)}" target="_blank" rel="noopener" class="opp-link">View bid &rarr;</a>`
+        : ''}
+    </div>
+  `).join('');
 }
 
-// ---- Stat cards ----
-function updateStats(bids) {
-  const t = today();
-  const in7  = addDays(t, 7);
-  const in30 = addDays(t, 30);
+// ---- Render bid history ----
 
-  let newCount      = 0;
-  let dueSoon7      = 0;
-  let dueSoon30     = 0;
-
-  bids.forEach(b => {
-    if (isNewThisWeek(b.firstSeen)) newCount++;
-    if (isDueSoon(b.dueDate, 7))  dueSoon7++;
-    if (isDueSoon(b.dueDate, 30)) dueSoon30++;
-  });
-
-  document.getElementById('stat-total').textContent     = bids.length;
-  document.getElementById('stat-new').textContent       = newCount;
-  document.getElementById('stat-due-soon').textContent  = dueSoon7;
-  document.getElementById('stat-due-month').textContent = dueSoon30;
+function renderBidHistory(threads) {
+  const container = document.getElementById('bid-history-container');
+  container.innerHTML = threads.map(t => `
+    <div class="bid-history-row">
+      <div>
+        <div class="bid-opp-name">${escHtml(t.opportunity || '—')}</div>
+        <div class="opp-meta"><span>${escHtml(t.agency || '—')}</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span class="bid-amount">${t.bidAmount ? formatCurrency(t.bidAmount) : '—'}</span>
+        ${statusBadge(t.status)}
+      </div>
+    </div>
+  `).join('');
 }
 
-function updateLastScan() {
-  const el = document.getElementById('last-scan');
-  if (el) el.textContent = new Date().toLocaleDateString('en-US', {
-    weekday: 'long', month: 'long', day: 'numeric',
-  });
-}
+// ---- Manage subscription ----
 
-// ---- UI state helpers ----
-function showState(state) {
-  document.getElementById('loading-state').style.display = state === 'loading' ? 'flex'  : 'none';
-  document.getElementById('bids-table').style.display    = state === 'table'   ? 'table' : 'none';
-  document.getElementById('empty-state').style.display   = state === 'empty'   ? 'block' : 'none';
-  document.getElementById('error-state').style.display   = state === 'error'   ? 'block' : 'none';
-}
+async function openBillingPortal() {
+  if (!stripeCustomerId) return;
 
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
+  const btn = document.getElementById('manage-btn');
+  btn.disabled = true;
+  btn.textContent = 'Redirecting...';
 
-// ---- Logout ----
-function logout() {
-  sessionStorage.removeItem('cbp_contractor');
-  sessionStorage.removeItem('cbp_auth');
-  window.location.href = 'login.html';
+  try {
+    const res = await fetch('/api/cbp/customer-portal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customerId: stripeCustomerId }),
+    });
+    const { url, error } = await res.json();
+    if (error) throw new Error(error);
+    window.location.href = url;
+  } catch (err) {
+    console.error('Billing portal error:', err);
+    btn.disabled = false;
+    btn.textContent = 'Manage subscription';
+    alert('Something went wrong. Please try again or contact hello@contractorbidprep.com.');
+  }
 }
 
 // ---- Init ----
-loadBids();
+loadDashboard();

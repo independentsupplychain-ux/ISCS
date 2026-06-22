@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bid Portal — Contractors Bid Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    /* ---- Portal-specific additions (not duplicating styles.css) ---- */
+
+    .portal-not-found {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .portal-not-found-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 3rem 2.5rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .portal-not-found-card img { height: 56px; margin: 0 auto 1.5rem; }
+    .portal-not-found-card h1 { font-size: 1.3rem; color: var(--navy); margin-bottom: 0.75rem; }
+    .portal-not-found-card p  { font-size: 0.9rem; color: #6B7280; line-height: 1.7; }
+    .portal-not-found-card a  { color: var(--gold); font-weight: 600; }
+
+    .contractor-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.6rem;
+    }
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(201,168,76,0.1);
+      color: var(--navy);
+      font-size: 0.73rem;
+      font-weight: 600;
+      padding: 0.22rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(201,168,76,0.25);
+    }
+
+    .tier-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      margin-left: 0.6rem;
+      vertical-align: middle;
+    }
+    .tier-bronze { background: #FEF3C7; color: #92400E; }
+    .tier-silver { background: #EFF6FF; color: #1D4ED8; }
+    .tier-gold   { background: #FEF9EC; color: #92400E; border: 1px solid var(--gold); }
+
+    /* County column */
+    .bids-table .county-cell { font-size: 0.82rem; color: #6B7280; }
+
+    /* View link */
+    .view-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: var(--gold-dark);
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .view-link:hover { color: var(--navy); text-decoration: none; }
+
+    /* Mock mode banner */
+    .mock-banner {
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: var(--radius);
+      padding: 0.65rem 1rem;
+      font-size: 0.82rem;
+      color: #92400E;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    /* Value stat is gold */
+    #stat-value { color: var(--gold-dark); font-size: 1.6rem; }
+
+    /* Initial loading screen */
+    #init-loading {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    #init-loading .spinner {
+      border-color: rgba(201,168,76,0.25);
+      border-top-color: var(--gold);
+    }
+    #init-loading p { color: rgba(255,255,255,0.45); font-size: 0.875rem; }
+
+    @media (max-width: 768px) {
+      /* Hide County + Est. Value on small screens */
+      .bids-table th:nth-child(3),
+      .bids-table td:nth-child(3),
+      .bids-table th:nth-child(5),
+      .bids-table td:nth-child(5) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Initial loading screen (navy bg, shown while JS runs) ===== -->
+  <div id="init-loading">
+    <div class="spinner"></div>
+    <p>Loading your portal...</p>
+  </div>
+
+  <!-- ===== Not-found / inactive view ===== -->
+  <div id="not-found-view" style="display:none;">
+    <div class="portal-not-found">
+      <div class="portal-not-found-card">
+        <img src="../assets/logo.png" alt="Contractors Bid Prep" onerror="this.style.display='none'" />
+        <h1>Portal Link Not Found</h1>
+        <p>
+          This link is no longer active or was not recognized.<br><br>
+          If you're a CBP client, check your welcome email for your unique portal link, or
+          <a href="mailto:info@contractorbidprep.com">contact our team</a> for help.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Contractor Dashboard ===== -->
+  <div id="dashboard-view" style="display:none;" class="dashboard-layout">
+
+    <header class="dash-header">
+      <div class="dash-header-inner">
+        <div class="dash-logo">
+          <img src="../assets/logo.png" alt="CBP" onerror="this.style.display='none'" />
+          <span class="dash-logo-text">Contractors<br>Bid Prep</span>
+        </div>
+        <div id="header-name" class="dash-user"><!-- populated by JS --></div>
+      </div>
+    </header>
+
+    <main class="dash-main">
+
+      <div class="mock-banner" id="mock-banner" style="display:none;">
+        Demo mode &mdash; showing sample data. Add a Notion API key to see live opportunities.
+      </div>
+
+      <!-- Welcome / contractor identity -->
+      <div class="dash-welcome">
+        <h1>
+          Your Bid Opportunities
+          <span id="tier-badge-el"></span>
+        </h1>
+        <p>Matched to your trade(s) and service area. Refreshes every Sunday after the weekly scan.</p>
+        <div class="contractor-meta" id="contractor-meta"><!-- populated by JS --></div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stat-cards">
+        <div class="stat-card">
+          <p class="stat-card-label">Open Matches</p>
+          <p class="stat-card-value" id="stat-total">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-card-label">Due in 7 Days</p>
+          <p class="stat-card-value" id="stat-due-7">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-card-label">Due in 30 Days</p>
+          <p class="stat-card-value" id="stat-due-30">—</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-card-label">Est. Total Value</p>
+          <p class="stat-card-value" id="stat-value">—</p>
+        </div>
+      </div>
+
+      <!-- Bid Table -->
+      <div class="bids-section">
+        <div class="bids-header">
+          <h2>Open Opportunities</h2>
+          <span style="font-size:0.8rem;color:var(--gray);">Sorted soonest due date first</span>
+        </div>
+
+        <!-- Loading state -->
+        <div class="bids-loading" id="loading-state">
+          <div class="spinner"></div>
+          <p>Loading matched opportunities...</p>
+        </div>
+
+        <!-- Table -->
+        <table class="bids-table" id="bids-table" style="display:none;">
+          <thead>
+            <tr>
+              <th>Opportunity</th>
+              <th>Agency</th>
+              <th>County</th>
+              <th>Due Date</th>
+              <th>Est. Value</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody id="bids-tbody"></tbody>
+        </table>
+
+        <!-- Empty state -->
+        <div class="bids-empty" id="empty-state" style="display:none;">
+          <p style="font-size:2rem;margin-bottom:0.5rem;">&#x1F4CB;</p>
+          <p style="font-weight:600;color:#374151;">No open opportunities right now</p>
+          <p style="font-size:0.875rem;margin-top:0.4rem;color:#6B7280;">
+            No bids currently match your trade and service area.<br>
+            Check back after Sunday's weekly scan &mdash; new opportunities drop every week.
+          </p>
+        </div>
+
+        <!-- Error state -->
+        <div class="bids-empty" id="error-state" style="display:none;">
+          <p style="font-size:2rem;margin-bottom:0.5rem;">&#x26A0;&#xFE0F;</p>
+          <p style="font-weight:600;color:#374151;">Could not load bid data</p>
+          <p style="font-size:0.875rem;margin-top:0.4rem;color:#6B7280;">
+            Please refresh the page. If the issue persists,
+            <a href="mailto:info@contractorbidprep.com" style="color:var(--gold);font-weight:600;">contact support</a>.
+          </p>
+        </div>
+
+      </div><!-- /bids-section -->
+
+      <p style="margin-top:1.5rem;font-size:0.8rem;color:#9CA3AF;text-align:center;">
+        Opportunities matched to your registered trade(s) and service area.
+        Questions? <a href="mailto:info@contractorbidprep.com" style="color:var(--gold);">Email us</a>.
+      </p>
+
+    </main>
+  </div><!-- /dashboard-view -->
+
+<script>
+/* ============================================================
+   CBP Token Portal — bid-portal.html
+   No login. The token in the URL is the only access control.
+
+   URL format (after vercel.json rewrite):
+     contractorbidprep.com/portal/YOUR-TOKEN-HERE
+
+   For local dev without the rewrite, pass as query param:
+     /portal/bid-portal.html?token=demo-roofing-2025
+   ============================================================ */
+
+// ---- Extract token ----
+// Under the Vercel rewrite, URL is /portal/TOKEN — grab the last path segment.
+// In local dev (no rewrite), fall back to ?token= query param.
+function getToken() {
+  const parts = window.location.pathname.replace(/\/$/, '').split('/');
+  const last  = parts[parts.length - 1];
+  if (last && last !== 'bid-portal.html') return last;
+  return new URLSearchParams(window.location.search).get('token') || '';
+}
+
+// ---- Formatting helpers ----
+function fmtDate(s) {
+  if (!s) return '—';
+  const d = new Date(s + 'T00:00:00');
+  return isNaN(d) ? s : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function fmtCurrency(val) {
+  if (val === null || val === undefined || val === '') return '—';
+  if (val >= 1_000_000) return '$' + (val / 1_000_000).toFixed(1) + 'M';
+  if (val >= 1000)      return '$' + Math.round(val / 1000) + 'K';
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+}
+
+function esc(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function today() { return new Date().toISOString().slice(0, 10); }
+
+function withinDays(dateStr, n) {
+  if (!dateStr) return false;
+  const t   = today();
+  const cut = new Date(t); cut.setDate(cut.getDate() + n);
+  const cutStr = cut.toISOString().slice(0, 10);
+  return dateStr >= t && dateStr <= cutStr;
+}
+
+// ---- UI state ----
+function showBidsState(state) {
+  document.getElementById('loading-state').style.display = state === 'loading' ? 'flex'  : 'none';
+  document.getElementById('bids-table').style.display    = state === 'table'   ? 'table' : 'none';
+  document.getElementById('empty-state').style.display   = state === 'empty'   ? 'block' : 'none';
+  document.getElementById('error-state').style.display   = state === 'error'   ? 'block' : 'none';
+}
+
+// ---- Render contractor identity ----
+function renderContractor(c) {
+  document.title = `${c.name} — CBP Portal`;
+  document.getElementById('header-name').textContent = c.name;
+
+  // Tier badge
+  const tierEl    = document.getElementById('tier-badge-el');
+  const tierClass = { Bronze: 'tier-bronze', Silver: 'tier-silver', Gold: 'tier-gold' }[c.tier] || '';
+  if (c.tier && tierClass) {
+    tierEl.innerHTML = `<span class="tier-badge ${tierClass}">${esc(c.tier)}</span>`;
+  }
+
+  // Trade + county pills
+  const trades   = (c.trades      || []).map(t => `<span class="meta-pill">&#x1F528; ${esc(t)}</span>`);
+  const counties = (c.serviceArea || []).map(a => `<span class="meta-pill">&#x1F4CD; ${esc(a)}</span>`);
+  document.getElementById('contractor-meta').innerHTML = [...trades, ...counties].join('');
+}
+
+// ---- Render bids ----
+function renderBids(bids) {
+  if (!bids || bids.length === 0) {
+    showBidsState('empty');
+    return;
+  }
+
+  let due7 = 0, due30 = 0, totalValue = 0;
+  const tbody = document.getElementById('bids-tbody');
+  tbody.innerHTML = '';
+
+  bids.forEach(bid => {
+    if (withinDays(bid.dueDate, 7))  due7++;
+    if (withinDays(bid.dueDate, 30)) due30++;
+    if (bid.estimatedValue) totalValue += bid.estimatedValue;
+
+    const trades = Array.isArray(bid.tradeCategory) ? bid.tradeCategory : [];
+
+    const viewCell = bid.portalLink
+      ? `<a href="${esc(bid.portalLink)}" target="_blank" rel="noopener" class="view-link">
+           View
+           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+             <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+           </svg>
+         </a>`
+      : '<span style="color:#D1D5DB;font-size:0.75rem;">—</span>';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <div class="bid-title-link" style="font-weight:600;color:var(--navy);">
+          ${esc(bid.title || 'Untitled Opportunity')}
+        </div>
+        <div class="trade-pills" style="margin-top:0.25rem;">
+          ${trades.map(t => `<span class="trade-pill">${esc(t)}</span>`).join('')}
+        </div>
+      </td>
+      <td>${esc(bid.agency || '—')}</td>
+      <td class="county-cell">${esc(bid.county || '—')}</td>
+      <td>${fmtDate(bid.dueDate)}</td>
+      <td>${fmtCurrency(bid.estimatedValue)}</td>
+      <td>${viewCell}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('stat-total').textContent  = bids.length;
+  document.getElementById('stat-due-7').textContent  = due7;
+  document.getElementById('stat-due-30').textContent = due30;
+  document.getElementById('stat-value').textContent  = totalValue > 0 ? fmtCurrency(totalValue) : '—';
+
+  showBidsState('table');
+}
+
+// ---- Main ----
+async function init() {
+  const token = getToken();
+
+  if (!token) {
+    document.getElementById('init-loading').style.display   = 'none';
+    document.getElementById('not-found-view').style.display = 'block';
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/cbp/contractor?token=${encodeURIComponent(token)}`);
+
+    if (res.status === 404) {
+      document.getElementById('init-loading').style.display   = 'none';
+      document.getElementById('not-found-view').style.display = 'block';
+      return;
+    }
+
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
+
+    const { contractor, bids, mock } = await res.json();
+
+    document.getElementById('init-loading').style.display   = 'none';
+    document.getElementById('dashboard-view').style.display = 'flex';
+
+    if (mock) document.getElementById('mock-banner').style.display = 'block';
+
+    renderContractor(contractor);
+    showBidsState('loading');
+    renderBids(bids);
+
+  } catch (err) {
+    console.error('Portal error:', err);
+    document.getElementById('init-loading').style.display   = 'none';
+    document.getElementById('dashboard-view').style.display = 'flex';
+    showBidsState('error');
+  }
+}
+
+init();
+</script>
+</body>
+</html>

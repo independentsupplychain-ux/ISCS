@@ -1,56 +1,57 @@
 /* ============================================================
    Contractors Bid Prep — Stripe Checkout (client-side)
-   Calls /api/cbp/create-checkout-session, then redirects
-   to Stripe's hosted checkout page.
+   Calls /api/cbp/create-checkout-session with priceId + mode,
+   then redirects to Stripe's hosted checkout page.
    ============================================================ */
 
-const PLAN_LABELS = {
-  bronze: 'Bronze — $100/mo',
-  silver: 'Silver — $350/mo',
-  gold:   'Gold — $850/mo',
-};
-
-async function startCheckout(plan) {
-  if (!PLAN_LABELS[plan]) return;
-
-  const btn = document.querySelector(`[data-plan="${plan}"]`);
-  const originalText = btn ? btn.textContent : '';
-
+async function handleCheckout(priceId, mode = 'subscription') {
   try {
-    // Loading state
-    if (btn) {
+    // Disable all checkout buttons during redirect
+    document.querySelectorAll('[onclick^="handleCheckout"]').forEach(btn => {
       btn.disabled = true;
-      btn.textContent = 'Redirecting...';
-    }
+    });
 
     const res = await fetch('/api/cbp/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan }),
+      body: JSON.stringify({ priceId, mode }),
     });
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || `Server error ${res.status}`);
-    }
+    const { url, error } = await res.json();
 
-    const { url } = await res.json();
+    if (error) throw new Error(error);
+    if (!url)  throw new Error('No checkout URL returned.');
 
-    if (!url) throw new Error('No checkout URL returned from server.');
-
-    // Redirect to Stripe Checkout
     window.location.href = url;
 
   } catch (err) {
     console.error('Checkout error:', err);
-    showToast('Something went wrong. Please try again or email us.', true);
 
-    if (btn) {
+    document.querySelectorAll('[onclick^="handleCheckout"]').forEach(btn => {
       btn.disabled = false;
-      btn.textContent = originalText;
-    }
+    });
+
+    showToast('Something went wrong. Please try again or email hello@contractorbidprep.com.', true);
   }
 }
+
+// ---- Billing toggle ----
+
+function setBilling(period) {
+  const isAnnual = period === 'annual';
+
+  document.querySelectorAll('.billing-monthly').forEach(el => {
+    el.style.display = isAnnual ? 'none' : '';
+  });
+  document.querySelectorAll('.billing-annual').forEach(el => {
+    el.style.display = isAnnual ? '' : 'none';
+  });
+
+  document.getElementById('toggle-monthly').classList.toggle('active', !isAnnual);
+  document.getElementById('toggle-annual').classList.toggle('active', isAnnual);
+}
+
+// ---- Toast ----
 
 function showToast(message, isError = false) {
   const toast = document.getElementById('toast');

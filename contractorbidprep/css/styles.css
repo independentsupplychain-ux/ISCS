@@ -279,11 +279,60 @@ p { font-size: 1rem; color: #4B5563; }
 .pricing { background: var(--off-white); }
 .pricing h2 { color: var(--navy); margin-bottom: 0.75rem; }
 .section-sub { color: var(--gray); margin-bottom: 0.5rem; }
+/* ---- Billing toggle ---- */
+.billing-toggle {
+  display: inline-flex;
+  background: #F3F4F6;
+  border-radius: 999px;
+  padding: 4px;
+  margin-top: 1.5rem;
+  gap: 2px;
+}
+.toggle-btn {
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray);
+  padding: 0.45rem 1.25rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+.toggle-btn.active {
+  background: var(--navy);
+  color: var(--white);
+}
+.toggle-save {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #059669;
+  margin-left: 0.35rem;
+  vertical-align: middle;
+}
+.toggle-btn.active .toggle-save { color: #6EE7B7; }
+
+/* ---- Save badge on CTA buttons ---- */
+.save-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.25);
+  border-radius: 4px;
+  padding: 0.1rem 0.4rem;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+}
+
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.75rem;
-  margin-top: 3.5rem;
+  margin-top: 2rem;
   align-items: start;
 }
 .plan-card {

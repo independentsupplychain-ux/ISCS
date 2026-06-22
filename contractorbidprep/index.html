@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/contractorbidprep/css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
 
@@ -16,13 +16,13 @@
   <nav class="nav" id="nav">
     <div class="nav-inner">
       <a href="#" class="nav-logo">
-        <img src="/contractorbidprep/assets/logo.png" alt="CBP Logo" onerror="this.style.display='none'" />
+        <img src="assets/logo.png" alt="CBP Logo" onerror="this.style.display='none'" />
         <span class="nav-logo-text">Contractors<br>Bid Prep</span>
       </a>
       <div class="nav-links">
         <a href="#how-it-works">How It Works</a>
         <a href="#pricing">Pricing</a>
-        <a href="/contractorbidprep/portal/login.html" class="btn btn-outline">Client Login</a>
+        <a href="portal/login.html" class="btn btn-outline">Client Login</a>
       </div>
     </div>
   </nav>
@@ -32,7 +32,7 @@
     <div class="hero-bg"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <img src="/contractorbidprep/assets/logo.png" alt="Contractors Bid Prep" class="hero-logo" onerror="this.style.display='none'" />
+      <img src="assets/logo.png" alt="Contractors Bid Prep" class="hero-logo" onerror="this.style.display='none'" />
       <p class="hero-eyebrow">Gulf Coast Government Contracting</p>
       <h1>Win More Government<br><span>Contracts — Automatically</span></h1>
       <p class="hero-sub">
@@ -96,15 +96,25 @@
       <h2>Simple, Transparent Pricing</h2>
       <p class="section-sub">Month-to-month. Cancel anytime. No setup fees.</p>
 
+      <!-- Billing toggle -->
+      <div class="billing-toggle" id="billing-toggle" role="group" aria-label="Billing period">
+        <button class="toggle-btn active" id="toggle-monthly" onclick="setBilling('monthly')">Monthly</button>
+        <button class="toggle-btn" id="toggle-annual" onclick="setBilling('annual')">Annual <span class="toggle-save">Save up to 22%</span></button>
+      </div>
+
       <div class="pricing-grid">
 
         <!-- BRONZE -->
         <div class="plan-card">
           <div class="plan-icon bronze">&#x1F947;</div>
           <p class="plan-name">Bronze</p>
-          <div class="plan-price">
+          <div class="plan-price billing-monthly">
             <span class="amount">$100</span>
             <span class="period">/month</span>
+          </div>
+          <div class="plan-price billing-annual" style="display:none;">
+            <span class="amount">$1,000</span>
+            <span class="period">/year</span>
           </div>
           <p class="plan-tagline">Bid monitoring &amp; alerts for the solo contractor.</p>
           <ul class="plan-features">
@@ -116,8 +126,11 @@
             <li>DemandStar &amp; MFMP coverage</li>
           </ul>
           <div class="plan-cta">
-            <button class="btn btn-navy btn-block" data-plan="bronze" onclick="startCheckout('bronze')">
-              Get Started
+            <button class="btn btn-navy btn-block billing-monthly" onclick="handleCheckout('price_1Tgy1f3TSGNLvyC7qtc9Xa7S')">
+              Get started &mdash; $100/mo
+            </button>
+            <button class="btn btn-navy btn-block billing-annual" style="display:none;" onclick="handleCheckout('price_1TiyR43TSGNLvyC7dQpnhQ5X')">
+              Get started &mdash; $1,000/yr <span class="save-badge">2 months free</span>
             </button>
           </div>
         </div>
@@ -127,9 +140,13 @@
           <div class="popular-badge">Most Popular</div>
           <div class="plan-icon silver">&#x1F948;</div>
           <p class="plan-name">Silver</p>
-          <div class="plan-price">
+          <div class="plan-price billing-monthly">
             <span class="amount">$350</span>
             <span class="period">/month</span>
+          </div>
+          <div class="plan-price billing-annual" style="display:none;">
+            <span class="amount">$3,500</span>
+            <span class="period">/year</span>
           </div>
           <p class="plan-tagline">Full automation — from alert to signed bid package.</p>
           <ul class="plan-features">
@@ -142,8 +159,11 @@
             <li>Bid history &amp; status tracking</li>
           </ul>
           <div class="plan-cta">
-            <button class="btn btn-gold btn-block" data-plan="silver" onclick="startCheckout('silver')">
-              Get Started
+            <button class="btn btn-gold btn-block billing-monthly" onclick="handleCheckout('price_1Tgy1h3TSGNLvyC721DXKgP5')">
+              Get started &mdash; $350/mo
+            </button>
+            <button class="btn btn-gold btn-block billing-annual" style="display:none;" onclick="handleCheckout('price_1TiyR73TSGNLvyC7R33iFBeZ')">
+              Get started &mdash; $3,500/yr <span class="save-badge">2 months free</span>
             </button>
           </div>
         </div>
@@ -152,9 +172,13 @@
         <div class="plan-card">
           <div class="plan-icon gold-icon">&#x1F3C6;</div>
           <p class="plan-name">Gold</p>
-          <div class="plan-price">
+          <div class="plan-price billing-monthly">
             <span class="amount">$850</span>
             <span class="period">/month</span>
+          </div>
+          <div class="plan-price billing-annual" style="display:none;">
+            <span class="amount">$8,000</span>
+            <span class="period">/year</span>
           </div>
           <p class="plan-tagline">Full-service bid management for growing contractors.</p>
           <ul class="plan-features">
@@ -167,8 +191,11 @@
             <li>Multi-county geographic coverage</li>
           </ul>
           <div class="plan-cta">
-            <button class="btn btn-navy btn-block" data-plan="gold" onclick="startCheckout('gold')">
-              Get Started
+            <button class="btn btn-navy btn-block billing-monthly" onclick="handleCheckout('price_1Tgy1h3TSGNLvyC7EzwDi8wU')">
+              Get started &mdash; $850/mo
+            </button>
+            <button class="btn btn-navy btn-block billing-annual" style="display:none;" onclick="handleCheckout('price_1TiyRB3TSGNLvyC7WHVSmH3F')">
+              Get started &mdash; $8,000/yr <span class="save-badge">save 22%</span>
             </button>
           </div>
         </div>
@@ -176,7 +203,7 @@
       </div><!-- /pricing-grid -->
 
       <p style="margin-top:2rem;font-size:0.85rem;color:#9CA3AF;">
-        Subscriptions are billed monthly via Stripe. Questions?
+        Subscriptions are billed via Stripe. Cancel anytime. Questions?
         <a href="mailto:info@contractorbidprep.com" style="color:#C9A84C;">Email us</a>.
       </p>
     </div>
@@ -187,19 +214,18 @@
     <div class="container">
       <h2>Ready to Stop Missing Bids?</h2>
       <p>Join contractors across the Gulf Coast who let Contractor Bid Prep do the legwork while they do the fieldwork.</p>
-      <a href="#pricing" class="btn btn-gold btn-lg">Choose Your Plan</a>
+      <a href="https://tally.so/r/Gxkvvz" class="btn btn-gold btn-lg">Enroll Now</a>
     </div>
   </section>
 
   <!-- ===== FOOTER ===== -->
   <footer class="footer">
     <div class="container">
-      <img src="/contractorbidprep/assets/logo.png" alt="CBP" class="footer-logo" onerror="this.style.display='none'" />
+      <img src="assets/logo.png" alt="CBP" class="footer-logo" onerror="this.style.display='none'" />
       <p>
         &copy; 2025 Contractors Bid Prep &mdash; a DBA of ISCS. &nbsp;|&nbsp;
-        <a href="/contractorbidprep/portal/login.html">Client Portal</a> &nbsp;|&nbsp;
-        <a href="mailto:info@contractorbidprep.com">Contact</a> &nbsp;|&nbsp;
-        <a href="/contractorbidprep/terms.html">Terms &amp; Conditions</a>
+        <a href="portal/login.html">Client Portal</a> &nbsp;|&nbsp;
+        <a href="mailto:info@contractorbidprep.com">Contact</a>
       </p>
     </div>
   </footer>
@@ -208,7 +234,7 @@
   <div class="toast" id="toast"></div>
 
   <!-- Scripts -->
-  <script src="/contractorbidprep/js/checkout.js"></script>
+  <script src="js/checkout.js"></script>
   <script>
     // Sticky nav on scroll
     const nav = document.getElementById('nav');

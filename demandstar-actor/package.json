@@ -1,0 +1,15 @@
+{
+    "name": "demandstar-gulf-coast-scraper",
+    "version": "2.0.0",
+    "description": "Scrapes DemandStar active bid opportunities for Gulf Coast FL/AL — roofing, GC, HVAC, electrical (Contractor Bid Prep / ISCS)",
+    "main": "src/main.js",
+    "type": "module",
+    "scripts": {
+        "start": "node src/main.js"
+    },
+    "dependencies": {
+        "apify": "^3.7.2",
+        "crawlee": "^3.17.0",
+        "playwright": "^1.60.0"
+    }
+}

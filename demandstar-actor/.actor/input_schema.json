@@ -1,0 +1,29 @@
+{
+    "$schema": "https://apify.com/schemas/v1/input.ide.json",
+    "title": "DemandStar Gulf Coast Bid Scraper",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "email": {
+            "title": "DemandStar Email",
+            "type": "string",
+            "description": "Login email for DemandStar / OpenBids account.",
+            "editor": "textfield",
+            "isSecret": false
+        },
+        "password": {
+            "title": "DemandStar Password",
+            "type": "string",
+            "description": "Login password for DemandStar / OpenBids account.",
+            "editor": "textfield",
+            "isSecret": true
+        },
+        "disableGeographyFilter": {
+            "title": "Disable Gulf Coast filter",
+            "type": "boolean",
+            "description": "Default false = return ALL active FL + AL bids statewide (no geo filter). Set true to restrict output to Gulf Coast corridor keywords only (Pensacola → Tallahassee + Mobile AL). Note: despite the confusing name, true = Gulf Coast filter ON.",
+            "default": false
+        }
+    },
+    "required": ["email", "password"]
+}

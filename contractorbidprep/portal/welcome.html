@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome — Contractors Bid Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #ffffff;
+      color: #1B2A4A;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .welcome-card {
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+    }
+    .logo-wrap {
+      margin-bottom: 2rem;
+    }
+    .logo-wrap img {
+      height: 72px;
+      display: block;
+      margin: 0 auto;
+    }
+    .logo-fallback {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: #1B2A4A;
+      line-height: 1.2;
+    }
+    .checkmark {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #B8860B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+    .checkmark svg {
+      width: 32px;
+      height: 32px;
+      stroke: #ffffff;
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #1B2A4A;
+      margin-bottom: 1rem;
+      line-height: 1.25;
+    }
+    .body-text {
+      font-size: 1rem;
+      color: #4B5563;
+      line-height: 1.65;
+      margin-bottom: 2rem;
+    }
+    .btn-gold {
+      display: inline-block;
+      background: #B8860B;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0.875rem 2rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-gold:hover { background: #9a6f09; }
+    .divider {
+      border: none;
+      border-top: 1px solid #E5E7EB;
+      margin: 2rem 0;
+    }
+    .footer-note {
+      font-size: 0.8rem;
+      color: #9CA3AF;
+    }
+    .footer-note a { color: #B8860B; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <div class="welcome-card">
+
+    <div class="logo-wrap">
+      <img src="../assets/logo.png" alt="Contractors Bid Prep"
+           onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';" />
+      <div class="logo-fallback" id="logo-text" style="display:none;">
+        CONTRACTORS BID PREP
+      </div>
+    </div>
+
+    <div class="checkmark">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+
+    <h1>You're in. Welcome to Contractor Bid Prep.</h1>
+
+    <p class="body-text">
+      Your first bid alert goes out this Sunday at 7:45 PM CT. When a matching
+      opportunity comes in, you'll get a text. Reply with your number and we handle
+      the rest.
+    </p>
+
+    <a href="dashboard.html" class="btn-gold">Go to your dashboard</a>
+
+    <hr class="divider" />
+
+    <p style="font-size:0.9rem;color:#4B5563;margin-bottom:1rem;">
+      Know another contractor who could use this? Enroll a teammate.
+    </p>
+    <a href="https://tally.so/r/Gxkvvz" class="btn-gold" style="font-size:0.9rem;padding:0.65rem 1.5rem;">
+      Enroll a Teammate
+    </a>
+
+    <hr class="divider" />
+
+    <p class="footer-note">
+      Questions? Email us at
+      <a href="mailto:hello@contractorbidprep.com">hello@contractorbidprep.com</a>
+    </p>
+
+  </div>
+
+</body>
+</html>

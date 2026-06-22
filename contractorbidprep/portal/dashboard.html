@@ -3,11 +3,116 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bid Dashboard — Contractors Bid Prep</title>
+  <title>Dashboard — Contractors Bid Prep</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/contractorbidprep/css/styles.css" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    .tier-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: #C9A84C;
+      color: #1B2A4A;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+    .opp-card {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .opp-card-body { flex: 1; }
+    .opp-title {
+      font-weight: 600;
+      color: #1B2A4A;
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+    .opp-meta {
+      font-size: 0.8rem;
+      color: #6B7280;
+    }
+    .opp-meta span { margin-right: 1rem; }
+    .opp-link {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #C9A84C;
+      text-decoration: none;
+      white-space: nowrap;
+      align-self: center;
+    }
+    .opp-link:hover { text-decoration: underline; }
+    .status-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+    }
+    .status-submitted { background: #D1FAE5; color: #065F46; }
+    .status-review    { background: #FEF3C7; color: #92400E; }
+    .status-no-response { background: #F3F4F6; color: #6B7280; }
+    .manage-btn {
+      display: inline-block;
+      background: none;
+      border: 2px solid #1B2A4A;
+      color: #1B2A4A;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.625rem 1.25rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .manage-btn:hover { background: #1B2A4A; color: #fff; }
+    .manage-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .section-heading {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1B2A4A;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #F3F4F6;
+    }
+    .dashboard-section { margin-bottom: 2rem; }
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #6B7280;
+      font-size: 0.9rem;
+      background: #F9FAFB;
+      border-radius: 8px;
+    }
+    .bid-history-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #F3F4F6;
+      font-size: 0.875rem;
+    }
+    .bid-history-row:last-child { border-bottom: none; }
+    .bid-history-wrap {
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .bid-opp-name { font-weight: 500; color: #1B2A4A; }
+    .bid-amount   { color: #374151; }
+  </style>
 </head>
 <body>
 
@@ -17,17 +122,13 @@
     <header class="dash-header">
       <div class="dash-header-inner">
         <div class="dash-logo">
-          <img src="/contractorbidprep/assets/logo.png" alt="CBP" onerror="this.style.display='none'" />
+          <img src="../assets/logo.png" alt="CBP" onerror="this.style.display='none'" />
           <span class="dash-logo-text">Contractors<br>Bid Prep</span>
         </div>
         <div class="dash-user">
           <span id="user-name-display">Loading...</span>
+          <span id="tier-badge-header"></span>
           <div class="dash-avatar" id="user-avatar">?</div>
-          <button
-            onclick="logout()"
-            style="background:none;border:none;color:rgba(255,255,255,0.5);
-                   font-size:0.8rem;cursor:pointer;margin-left:0.5rem;font-family:inherit;"
-          >Sign out</button>
         </div>
       </div>
     </header>
@@ -35,102 +136,59 @@
     <!-- ===== MAIN ===== -->
     <main class="dash-main">
 
-      <!-- Welcome -->
-      <div class="dash-welcome">
-        <h1>Good to see you, <span id="welcome-name" class="text-gold">—</span></h1>
-        <p>Here are your active bid opportunities pulled live from the Contractor Bid Prep database.</p>
+      <!-- Loading state -->
+      <div id="state-loading" class="bids-loading" style="display:flex;">
+        <div class="spinner"></div>
+        <p>Loading your dashboard...</p>
       </div>
 
-      <!-- Stat Cards -->
-      <div class="stat-cards" id="stat-cards">
-        <div class="stat-card">
-          <p class="stat-card-label">Open Bids</p>
-          <p class="stat-card-value" id="stat-total">—</p>
-        </div>
-        <div class="stat-card">
-          <p class="stat-card-label">New This Week</p>
-          <p class="stat-card-value gold" id="stat-new">—</p>
-        </div>
-        <div class="stat-card">
-          <p class="stat-card-label">Due in 7 Days</p>
-          <p class="stat-card-value" id="stat-due-soon">—</p>
-        </div>
-        <div class="stat-card">
-          <p class="stat-card-label">Due in 30 Days</p>
-          <p class="stat-card-value" id="stat-due-month">—</p>
-        </div>
+      <!-- Error state -->
+      <div id="state-error" style="display:none;" class="bids-empty">
+        <p style="font-size:2rem;margin-bottom:0.5rem;">&#x26A0;&#xFE0F;</p>
+        <p style="font-weight:600;color:#374151;">Couldn't load your dashboard.</p>
+        <p style="font-size:0.875rem;margin-top:0.5rem;color:#6B7280;">
+          Try refreshing or contact
+          <a href="mailto:hello@contractorbidprep.com" style="color:#C9A84C;">hello@contractorbidprep.com</a>
+        </p>
       </div>
 
-      <!-- Bid Table -->
-      <div class="bids-section">
-        <div class="bids-header">
-          <h2>Bid Opportunities</h2>
-          <button class="bids-refresh" id="refresh-btn" onclick="loadBids()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="23 4 23 10 17 10"></polyline>
-              <polyline points="1 20 1 14 7 14"></polyline>
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-            </svg>
-            Refresh
+      <!-- Dashboard content (hidden until data loads) -->
+      <div id="state-content" style="display:none;">
+
+        <!-- Welcome -->
+        <div class="dash-welcome">
+          <h1>Good to see you, <span id="welcome-name" class="text-gold">—</span></h1>
+          <p>Here are your active bid opportunities pulled live from the Contractor Bid Prep database.</p>
+        </div>
+
+        <!-- Active Opportunities -->
+        <div class="dashboard-section">
+          <h2 class="section-heading">Active Opportunities</h2>
+          <div id="opps-container"></div>
+        </div>
+
+        <!-- Bid History (Gold only, rendered if threads exist) -->
+        <div class="dashboard-section" id="bid-history-section" style="display:none;">
+          <h2 class="section-heading">Bid History</h2>
+          <div class="bid-history-wrap" id="bid-history-container"></div>
+        </div>
+
+        <!-- Manage Subscription -->
+        <div class="dashboard-section">
+          <h2 class="section-heading">Subscription</h2>
+          <p style="font-size:0.875rem;color:#6B7280;margin-bottom:1rem;">
+            Update payment method, download invoices, or cancel your plan.
+          </p>
+          <button class="manage-btn" id="manage-btn" onclick="openBillingPortal()">
+            Manage subscription
           </button>
         </div>
 
-        <div id="bids-body">
-          <!-- Loading state -->
-          <div class="bids-loading" id="loading-state">
-            <div class="spinner"></div>
-            <p>Loading your bid data...</p>
-          </div>
-
-          <!-- Table (hidden until data loads) -->
-          <table class="bids-table" id="bids-table" style="display:none;">
-            <thead>
-              <tr>
-                <th>Opportunity</th>
-                <th>Agency</th>
-                <th>Due Date</th>
-                <th>Est. Value</th>
-                <th>Trade</th>
-              </tr>
-            </thead>
-            <tbody id="bids-tbody"></tbody>
-          </table>
-
-          <!-- Empty state -->
-          <div class="bids-empty" id="empty-state" style="display:none;">
-            <p style="font-size:2rem;margin-bottom:0.5rem;">&#x1F4CB;</p>
-            <p style="font-weight:600;color:#374151;">No bids found</p>
-            <p style="font-size:0.875rem;margin-top:0.25rem;">
-              New opportunities will appear here as soon as the weekly scan runs.
-            </p>
-          </div>
-
-          <!-- Error state -->
-          <div class="bids-empty" id="error-state" style="display:none;">
-            <p style="font-size:2rem;margin-bottom:0.5rem;">&#x26A0;&#xFE0F;</p>
-            <p style="font-weight:600;color:#374151;" id="error-msg">Could not load bids</p>
-            <p style="font-size:0.875rem;margin-top:0.25rem;">
-              <button onclick="loadBids()" style="color:#C9A84C;background:none;border:none;
-              cursor:pointer;font-size:0.875rem;font-family:inherit;font-weight:600;">
-                Try again
-              </button>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <p style="margin-top:1.5rem;font-size:0.8rem;color:#9CA3AF;text-align:center;">
-        Data refreshes automatically every Sunday. Last scan:
-        <span id="last-scan">—</span>
-      </p>
+      </div><!-- /state-content -->
 
     </main>
   </div>
 
-  <!-- Toast -->
-  <div class="toast" id="toast"></div>
-
-  <script src="/contractorbidprep/js/dashboard.js"></script>
+  <script src="../js/dashboard.js"></script>
 </body>
 </html>
