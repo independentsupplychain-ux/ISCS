@@ -156,6 +156,16 @@ p { font-size: 1rem; color: #4B5563; }
 }
 .nav-links a:hover { color: var(--gold-light); }
 .nav-links .btn { padding: 0.5rem 1.25rem; font-size: 0.875rem; }
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
 
 /* ---- Hero ---- */
 .hero {
@@ -806,7 +816,29 @@ p { font-size: 1rem; color: #4B5563; }
 
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
-  .nav-links { display: none; }
+  .nav-toggle { display: block; }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: var(--navy-dark);
+    padding: 0.5rem 1.5rem 1.25rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+  .nav-links .btn {
+    margin-top: 0.75rem;
+    text-align: center;
+  }
   .pricing-grid { grid-template-columns: 1fr; }
   .plan-card.featured { transform: none; }
   /* Hide Est. Value and Trade on small screens */
@@ -819,4 +851,5 @@ p { font-size: 1rem; color: #4B5563; }
 @media (max-width: 480px) {
   .hero-actions { flex-direction: column; align-items: center; }
   .stat-cards { grid-template-columns: 1fr; }
+  .hero-eyebrow { font-size: 0.6rem; letter-spacing: 0.12em; }
 }
