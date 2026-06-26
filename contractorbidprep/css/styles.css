@@ -131,19 +131,8 @@ p { font-size: 1rem; color: #4B5563; }
   gap: 0.85rem;
   color: var(--gold);
 }
-.nav-logo-oval {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 96px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--white);
-  overflow: hidden;
-  flex-shrink: 0;
-}
 .nav-logo img {
-  height: 80px;
+  height: 56px;
   width: auto;
 }
 .nav-logo-text {
@@ -202,7 +191,7 @@ p { font-size: 1rem; color: #4B5563; }
 }
 .hero-logo {
   margin: 0 auto 2rem;
-  height: 90px;
+  height: 180px;
   width: auto;
   filter: drop-shadow(0 2px 12px rgba(201,168,76,0.4));
 }
@@ -425,6 +414,7 @@ p { font-size: 1rem; color: #4B5563; }
 }
 .plan-features {
   margin-bottom: 2rem;
+  text-align: left;
 }
 .plan-features li {
   display: flex;
