@@ -260,6 +260,11 @@ p { font-size: 1rem; color: #4B5563; }
   transition: border-color 0.2s;
 }
 .step:hover { border-color: rgba(201,168,76,0.5); }
+.step-gold {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(201,168,76,0.3);
+}
+.step-gold:hover { border-color: var(--gold-light); }
 .step-num {
   width: 52px;
   height: 52px;
