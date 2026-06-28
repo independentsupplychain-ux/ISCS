@@ -200,7 +200,7 @@ p { font-size: 1rem; color: #4B5563; }
   padding: 0 1.5rem;
 }
 .hero-logo {
-  margin: 0 auto 2rem;
+  margin: 6rem auto 2rem;
   height: 180px;
   width: auto;
   filter: drop-shadow(0 2px 12px rgba(201,168,76,0.4));
@@ -844,13 +844,16 @@ p { font-size: 1rem; color: #4B5563; }
   }
   .nav-links.open { display: flex; }
   .nav-links a {
-    padding: 0.75rem 0;
+    padding: 1.1rem 0.5rem;
     border-bottom: 1px solid rgba(201,168,76,0.15);
   }
   .nav-links .btn {
     margin-top: 0.75rem;
     text-align: center;
   }
+  /* .hero-scroll is bottom-anchored (top: auto), so margin-top on it has no
+     effect; reserve space below the hero content instead to create the gap. */
+  .hero-content { padding-bottom: 6rem; }
   .pricing-grid { grid-template-columns: 1fr; }
   .plan-card.featured { transform: none; }
   /* Hide Est. Value and Trade on small screens */
