@@ -514,6 +514,100 @@ p { font-size: 1rem; color: #4B5563; }
 }
 .footer a { color: var(--gold); }
 .footer-logo { margin: 0 auto 0.75rem; height: 32px; opacity: 0.6; }
+.footer-legal {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem 1.5rem;
+}
+.footer-legal a {
+  color: var(--gold);
+  font-size: 0.8rem;
+}
+.footer-legal a:hover { color: var(--gold-light); }
+.footer-copyright {
+  margin-top: 1rem;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ---- Legal pages ---- */
+.legal-hero {
+  background: var(--navy);
+  padding: 8.5rem 1.5rem 3rem;
+  text-align: center;
+}
+.legal-hero .badge { margin-bottom: 1rem; }
+.legal-hero h1 { color: var(--white); margin-bottom: 0.5rem; }
+.legal-hero p { color: rgba(255,255,255,0.65); max-width: 600px; margin: 0 auto; }
+.legal-wrap { background: var(--off-white); padding: 3.5rem 0 5rem; }
+.legal-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.legal-card section { margin-bottom: 2.5rem; scroll-margin-top: 5rem; }
+.legal-card section:last-of-type { margin-bottom: 0; }
+.legal-card h2 {
+  font-size: 1.3rem;
+  color: var(--navy);
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 0.6rem;
+  margin-bottom: 1.1rem;
+}
+.legal-card h3 {
+  font-size: 1.02rem;
+  color: var(--navy-light);
+  margin: 1.25rem 0 0.5rem;
+}
+.legal-card p, .legal-card li { font-size: 0.95rem; color: #4B5563; }
+.legal-card ul { padding-left: 1.3rem; list-style: disc; margin-bottom: 0.75rem; }
+.legal-card ul li { margin-bottom: 0.4rem; }
+.legal-caps {
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--navy-dark);
+  background: var(--off-white);
+  border-left: 4px solid var(--gold);
+  padding: 1rem 1.25rem;
+  border-radius: 0 6px 6px 0;
+  line-height: 1.5;
+}
+.legal-callout {
+  background: #FEF9EC;
+  border-left: 4px solid var(--gold);
+  padding: 1rem 1.25rem;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.92rem;
+}
+.legal-toc {
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+.legal-toc a { color: var(--navy-light); border-bottom: 1px solid transparent; }
+.legal-toc a:hover { color: var(--gold-dark); border-color: var(--gold); }
+.legal-footnote {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--gray);
+  margin-top: 2.5rem;
+  font-style: italic;
+}
+@media (max-width: 600px) {
+  .legal-card { padding: 1.75rem 1.25rem; }
+}
 
 /* ---- Portal / Auth ---- */
 .auth-page {
@@ -844,13 +938,15 @@ p { font-size: 1rem; color: #4B5563; }
   }
   .nav-links.open { display: flex; }
   .nav-links a {
-    padding: 0.75rem 0;
+    padding: 16px 0;
     border-bottom: 1px solid rgba(201,168,76,0.15);
   }
   .nav-links .btn {
     margin-top: 0.75rem;
     text-align: center;
   }
+  .hero-content { padding-top: 5.5rem; }
+  .hero-scroll { margin-top: 32px; bottom: 1.25rem; }
   .pricing-grid { grid-template-columns: 1fr; }
   .plan-card.featured { transform: none; }
   /* Hide Est. Value and Trade on small screens */

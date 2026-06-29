@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Incentives &amp; Tax Benefits | Contractors Bid Prep</title>
+  <meta name="description" content="Tax deductibility, setup fee savings, and municipal subsidy programs for Contractors Bid Prep subscribers." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/contractorbidprep/css/styles.css" />
+</head>
+<body>
+
+  <!-- ===== NAV ===== -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/contractorbidprep/index.html" class="nav-logo">
+        <img src="/contractorbidprep/assets/logo.png" alt="CBP Logo" onerror="this.style.display='none'" />
+        <span class="nav-logo-text">Contractors<br>Bid Prep</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="/contractorbidprep/index.html#how-it-works">How It Works</a>
+        <a href="/contractorbidprep/index.html#pricing">Pricing</a>
+        <a href="/contractorbidprep/portal/login.html" class="btn btn-outline">Client Login</a>
+      </div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#x2261;</button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="legal-hero">
+    <span class="badge">Savings</span>
+    <h1>Incentives &amp; Tax Benefits</h1>
+    <p>Ways your CBP subscription can cost less than the sticker price.</p>
+  </section>
+
+  <!-- ===== CONTENT ===== -->
+  <section class="legal-wrap">
+    <div class="container">
+
+      <nav class="legal-toc" aria-label="Page sections">
+        <a href="#deductible">Tax-Deductible?</a>
+        <a href="#setup-fees">Setup Fee Savings</a>
+        <a href="#municipal">Municipal Subsidy</a>
+      </nav>
+
+      <div class="legal-card">
+
+        <section id="deductible">
+          <h2>1. Is My CBP Subscription Tax-Deductible?</h2>
+          <p>In most cases, yes. A Contractors Bid Prep subscription is generally deductible as an ordinary and necessary business expense under <strong>IRC Section 162</strong> — the same way you'd deduct any professional service or software subscription used to run your contracting business.</p>
+          <div class="legal-callout">
+            <p style="margin:0;">Every contractor's tax situation is different. We recommend you consult your tax professional to confirm how this applies to you. This page is general information, not tax advice.</p>
+          </div>
+        </section>
+
+        <section id="setup-fees">
+          <h2>2. Save on Setup Fees</h2>
+          <p>Setup fees for our Silver and Gold plans are routinely waived for qualifying contractors. If you're enrolling and want to find out whether you qualify, just mention it at enrollment — there's no harm in asking.</p>
+        </section>
+
+        <section id="municipal">
+          <h2>3. Municipal Subsidy Program</h2>
+          <p>Municipalities and economic development authorities (EDAs) can sponsor Bronze-tier access for local contractors at a group rate, helping more local trade contractors compete for public work.</p>
+          <p class="placeholder-note" style="font-style:italic; color:var(--gray);">This program is coming soon. Check back for details, or email us if you represent a municipality or EDA interested in sponsoring local contractors.</p>
+        </section>
+
+      </div>
+
+      <p class="legal-footnote">This page is for general informational purposes only and does not constitute tax advice. Consult a qualified tax professional for guidance specific to your situation.</p>
+
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <img src="/contractorbidprep/assets/iscs-logo.jpg" alt="ISCS" class="footer-logo" onerror="this.style.display='none'" />
+      <p>
+        <a href="/contractorbidprep/portal/login.html">Client Portal</a> &nbsp;|&nbsp;
+        <a href="mailto:info@contractorbidprep.com">Contact</a>
+      </p>
+      <div class="footer-legal">
+        <a href="/contractorbidprep/terms.html">Terms of Service</a>
+        <a href="/contractorbidprep/subscriber-terms.html">Subscriber Agreement</a>
+        <a href="/contractorbidprep/privacy.html">Privacy Policy</a>
+        <a href="/contractorbidprep/incentives.html">Incentives</a>
+      </div>
+      <p class="footer-copyright">&copy; 2026 ISCS / Contractor Bid Prep. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    });
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', isOpen);
+    });
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
+</body>
+</html>
