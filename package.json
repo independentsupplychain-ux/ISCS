@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@notionhq/client": "^2.2.15",
+    "@vercel/analytics": "^2.0.1",
     "micro": "^10.0.1",
     "stripe": "^14.0.0"
   }
