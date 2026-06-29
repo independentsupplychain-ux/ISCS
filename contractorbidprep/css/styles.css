@@ -177,6 +177,7 @@ p { font-size: 1rem; color: #4B5563; }
   text-align: center;
   color: var(--white);
   overflow: hidden;
+  padding-top: 100px;
 }
 .hero-bg {
   position: absolute;
@@ -232,22 +233,6 @@ p { font-size: 1rem; color: #4B5563; }
   justify-content: center;
   flex-wrap: wrap;
 }
-.hero-scroll {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255,255,255,0.5);
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  animation: bounce 2s infinite;
-}
-@keyframes bounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(6px); }
-}
-
 /* ---- How It Works ---- */
 .how {
   background: var(--navy);
@@ -945,8 +930,6 @@ p { font-size: 1rem; color: #4B5563; }
     margin-top: 0.75rem;
     text-align: center;
   }
-  .hero-content { padding-top: 6.5rem; }
-  .hero-scroll { margin-top: 32px; bottom: 1.25rem; }
   .pricing-grid { grid-template-columns: 1fr; }
   .plan-card.featured { transform: none; }
   /* Hide Est. Value and Trade on small screens */
