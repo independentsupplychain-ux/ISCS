@@ -1,10 +1,26 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/portal/:token",
-      "destination": "/portal/bid-portal.html"
+      "src": "/portal/(.*)",
+      "dest": "/portal/bid-portal.html"
     },
-    { "source": "/", "destination": "/contractorbidprep/index.html" },
-    { "source": "/((?!contractorbidprep|assets|css|js).*)", "destination": "/contractorbidprep/$1" }
+    {
+      "src": "/",
+      "has": [{ "type": "host", "value": "contractorbidprep.com" }],
+      "dest": "/contractorbidprep/index.html"
+    },
+    {
+      "src": "/((?!contractorbidprep|assets|css|js|portal).*)",
+      "has": [{ "type": "host", "value": "contractorbidprep.com" }],
+      "dest": "/contractorbidprep/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/contractorbidprep/index.html"
+    },
+    {
+      "src": "/((?!contractorbidprep|assets|css|js|portal).*)",
+      "dest": "/contractorbidprep/$1"
+    }
   ]
 }
