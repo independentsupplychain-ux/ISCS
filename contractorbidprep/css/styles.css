@@ -945,7 +945,7 @@ p { font-size: 1rem; color: #4B5563; }
     margin-top: 0.75rem;
     text-align: center;
   }
-  .hero-content { padding-top: 5.5rem; }
+  .hero-content { padding-top: 6.5rem; }
   .hero-scroll { margin-top: 32px; bottom: 1.25rem; }
   .pricing-grid { grid-template-columns: 1fr; }
   .plan-card.featured { transform: none; }
