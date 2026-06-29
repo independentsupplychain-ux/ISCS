@@ -3,6 +3,8 @@
     {
       "source": "/portal/:token",
       "destination": "/portal/bid-portal.html"
-    }
+    },
+    { "source": "/", "destination": "/contractorbidprep/index.html" },
+    { "source": "/((?!contractorbidprep|assets|css|js).*)", "destination": "/contractorbidprep/$1" }
   ]
 }
