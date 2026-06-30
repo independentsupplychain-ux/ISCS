@@ -1,15 +1,17 @@
 // Required Vercel environment variables:
 //   STRIPE_WEBHOOK_SECRET  — signing secret from the Stripe Webhooks dashboard
-//   ZOHO_EMAIL             — davidduncan@contractorbidprep.com
-//   ZOHO_PASSWORD          — Zoho mail password for the above account
+//   STRIPE_SECRET_KEY      — Stripe secret key
+//   RESEND_API_KEY         — API key from resend.com
+//
+// contractorbidprep.com must be verified as a sending domain in the Resend dashboard
+// before emails will deliver.
 //
 // Register this endpoint in the Stripe dashboard under Developers → Webhooks:
 //   https://contractorbidprep.com/api/stripe-webhook
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// Vercel buffers the body by default; we need the raw bytes for signature verification.
 export const config = { api: { bodyParser: false } };
 
 function getRawBody(req) {
@@ -21,19 +23,11 @@ function getRawBody(req) {
   });
 }
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.zoho.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.ZOHO_EMAIL,
-    pass: process.env.ZOHO_PASSWORD,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 function buildEmail(toAddress, firstName) {
   return {
-    from: `David Duncan <${process.env.ZOHO_EMAIL}>`,
+    from: 'David Duncan <davidduncan@contractorbidprep.com>',
     to: toAddress,
     subject: "You're in — here's what happens next",
     text: `Hey ${firstName},
@@ -86,13 +80,13 @@ export default async function handler(req, res) {
       return res.status(200).json({ received: true });
     }
 
-    try {
-      await transporter.sendMail(buildEmail(toAddress, firstName));
-      console.log(`Welcome email sent to ${toAddress}`);
-    } catch (err) {
-      console.error('Failed to send welcome email:', err.message);
+    const { error } = await resend.emails.send(buildEmail(toAddress, firstName));
+    if (error) {
+      console.error('Failed to send welcome email:', error.message);
       return res.status(500).json({ error: 'Failed to send welcome email' });
     }
+
+    console.log(`Welcome email sent to ${toAddress}`);
   }
 
   return res.status(200).json({ received: true });
