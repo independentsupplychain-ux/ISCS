@@ -2,6 +2,8 @@
 //   STRIPE_WEBHOOK_SECRET  — signing secret from the Stripe Webhooks dashboard
 //   STRIPE_SECRET_KEY      — Stripe secret key
 //   RESEND_API_KEY         — API key from resend.com
+//   APIFY_ACTOR_ID         — Apify actor ID for the DemandStar scraper
+//   APIFY_API_TOKEN        — Apify API token
 //
 // contractorbidprep.com must be verified as a sending domain in the Resend dashboard
 // before emails will deliver.
@@ -48,6 +50,67 @@ contractorbidprep.com`,
   };
 }
 
+async function fetchBidOpportunities() {
+  const actorId = process.env.APIFY_ACTOR_ID;
+  const token = process.env.APIFY_API_TOKEN;
+  const url = `https://api.apify.com/v2/acts/${actorId}/runs/last/dataset/items?token=${token}`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Apify responded ${response.status}`);
+  return response.json();
+}
+
+function formatBidsText(items) {
+  return items
+    .map(
+      (item) =>
+        `---\n${item.opportunity_title || '(No title)'}\nAgency: ${item.agency_name || '—'}\nDue: ${item.due_date || '—'}\nEst. Value: ${item.estimated_value || '—'}\nLink: ${item.portal_link || '—'}\n---`
+    )
+    .join('\n\n');
+}
+
+function buildNoBidsEmail(toAddress, firstName) {
+  return {
+    from: 'David Duncan <davidduncan@contractorbidprep.com>',
+    to: toAddress,
+    subject: "No new bids this week — we're watching",
+    text: `Hey ${firstName},
+
+No matching bid opportunities came in this week for your trade and area. That happens sometimes — the pipeline runs every Sunday and we'll catch the next one.
+
+If you think your filters need adjusting, reply here and I'll take a look.
+
+— David
+Contractor Bid Prep`,
+  };
+}
+
+async function buildBidsEmail(toAddress, firstName) {
+  let items;
+  let fetchFailed = false;
+  try {
+    items = await fetchBidOpportunities();
+  } catch (err) {
+    console.warn('Apify fetch failed, falling back to no-bids email:', err.message);
+    fetchFailed = true;
+  }
+
+  if (fetchFailed || !Array.isArray(items) || items.length === 0) {
+    if (!fetchFailed) console.warn('Apify returned no bid items, sending no-bids fallback email');
+    return buildNoBidsEmail(toAddress, firstName);
+  }
+
+  const body =
+    "Here's what's active right now. Your weekly alerts start this Sunday — you'll get updates like this every week automatically.\n\n" +
+    formatBidsText(items);
+
+  return {
+    from: 'David Duncan <davidduncan@contractorbidprep.com>',
+    to: toAddress,
+    subject: 'Current bid opportunities in your area',
+    text: body,
+  };
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).end('Method Not Allowed');
@@ -87,6 +150,60 @@ export default async function handler(req, res) {
     }
 
     console.log(`Welcome email sent to ${toAddress}`);
+
+    // Send current bid opportunities (or no-bids fallback) — fire-and-forget, failures are non-fatal
+    try {
+      const bidsEmail = await buildBidsEmail(toAddress, firstName);
+      const { error: bidsError } = await resend.emails.send(bidsEmail);
+      if (bidsError) {
+        console.warn('Failed to send bids email:', bidsError.message);
+      } else {
+        console.log(`Bids email sent to ${toAddress}`);
+      }
+    } catch (err) {
+      console.warn('Bids email skipped due to error:', err.message);
+    }
+  } else if (event.type === 'customer.subscription.deleted') {
+    const subscription = event.data.object;
+    let toAddress, firstName;
+
+    try {
+      const customer = await stripe.customers.retrieve(subscription.customer);
+      toAddress = customer.email;
+      const fullName = customer.name || '';
+      firstName = fullName.split(' ')[0] || null;
+    } catch (err) {
+      console.warn('Failed to retrieve Stripe customer for cancellation email:', err.message);
+      return res.status(200).json({ received: true });
+    }
+
+    if (!toAddress) {
+      console.warn('customer.subscription.deleted: no customer email found, skipping cancellation email');
+      return res.status(200).json({ received: true });
+    }
+
+    const greeting = firstName ? `Hey ${firstName},` : 'Hello,';
+    const { error: cancelError } = await resend.emails.send({
+      from: 'David Duncan <davidduncan@contractorbidprep.com>',
+      to: toAddress,
+      subject: "You've been unsubscribed — Contractor Bid Prep",
+      text: `${greeting}
+
+Your Contractor Bid Prep subscription has been cancelled. You won't receive any further alerts.
+
+If this was a mistake or you want to re-enroll, reply here or visit contractorbidprep.com.
+
+Thanks for giving it a shot.
+
+— David
+Contractor Bid Prep`,
+    });
+
+    if (cancelError) {
+      console.warn('Failed to send cancellation email:', cancelError.message);
+    } else {
+      console.log(`Cancellation email sent to ${toAddress}`);
+    }
   }
 
   return res.status(200).json({ received: true });
