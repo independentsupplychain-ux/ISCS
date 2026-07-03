@@ -57,7 +57,9 @@ Every week, my system scans government procurement portals for bids that match y
 
 Our Gold subscribers take it a step further — they reply to a text with their number and CBP handles the rest. Bid document built, routed for e-signature, logged. If you ever want to talk about upgrading, reply here.
 
-Your first alert goes out Sunday evening. Questions before then, reply to this email — comes straight to me.
+You should also receive a second email shortly with your current open opportunities — that's your starting snapshot. After that, updates come every Sunday evening.
+
+Questions before then, reply to this email — comes straight to me.
 
 Glad to have you,
 
