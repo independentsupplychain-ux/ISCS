@@ -2,19 +2,36 @@
 //   STRIPE_WEBHOOK_SECRET  — signing secret from the Stripe Webhooks dashboard
 //   STRIPE_SECRET_KEY      — Stripe secret key
 //   RESEND_API_KEY         — API key from resend.com
+//   NOTION_API_KEY         — Notion internal integration token
 //   APIFY_ACTOR_ID         — Apify actor ID for the DemandStar scraper
 //   APIFY_API_TOKEN        — Apify API token
+//   BRONZE_MONTHLY_PRICE_ID, SILVER_MONTHLY_PRICE_ID, GOLD_MONTHLY_PRICE_ID
+//   BRONZE_ANNUAL_PRICE_ID, SILVER_ANNUAL_PRICE_ID, GOLD_ANNUAL_PRICE_ID
 //
 // contractorbidprep.com must be verified as a sending domain in the Resend dashboard
 // before emails will deliver.
 //
 // Register this endpoint in the Stripe dashboard under Developers → Webhooks:
-//   https://contractorbidprep.com/api/stripe-webhook
+//   https://www.contractorbidprep.com/api/stripe-webhook
+//   (use the www host — the bare domain 308-redirects and Stripe does not follow
+//   redirects on webhook deliveries)
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { Resend } = require('resend');
+const { Client } = require('@notionhq/client');
+const crypto = require('crypto');
 
-export const config = { api: { bodyParser: false } };
+const notion = new Client({ auth: process.env.NOTION_API_KEY });
+const CLIENT_PROFILES_DB = '4ad603ac-a8c0-4282-ae1b-4d898abd15e7';
+
+const PRICE_TO_TIER = {
+  [process.env.BRONZE_MONTHLY_PRICE_ID]: 'Bronze',
+  [process.env.SILVER_MONTHLY_PRICE_ID]: 'Silver',
+  [process.env.GOLD_MONTHLY_PRICE_ID]:   'Gold',
+  [process.env.BRONZE_ANNUAL_PRICE_ID]:  'Bronze',
+  [process.env.SILVER_ANNUAL_PRICE_ID]:  'Silver',
+  [process.env.GOLD_ANNUAL_PRICE_ID]:    'Gold',
+};
 
 function getRawBody(req) {
   return new Promise((resolve, reject) => {
@@ -111,7 +128,51 @@ async function buildBidsEmail(toAddress, firstName) {
   };
 }
 
-export default async function handler(req, res) {
+async function createNotionClientProfile(session) {
+  const priceId = session.line_items?.data[0]?.price?.id;
+  const tier = PRICE_TO_TIER[priceId] || 'Bronze';
+  const portalToken = crypto.randomUUID();
+  const customer = session.customer;
+
+  await notion.pages.create({
+    parent: { database_id: CLIENT_PROFILES_DB },
+    properties: {
+      'Contractor / Company': {
+        title: [{ text: { content: customer.name || session.customer_details?.name || 'New Client' } }],
+      },
+      'Contact Email': { email: customer.email || session.customer_details?.email },
+      Tier: { select: { name: tier } },
+      'Subscription Status': { select: { name: 'Active' } },
+      'Stripe Customer ID': { rich_text: [{ text: { content: customer.id } }] },
+      'Stripe Subscription ID': {
+        rich_text: [{ text: { content: session.subscription || '' } }],
+      },
+      'Portal Token': { rich_text: [{ text: { content: portalToken } }] },
+      'Onboarding Date': { date: { start: new Date().toISOString().split('T')[0] } },
+    },
+  });
+
+  console.log(`Created Notion profile for ${customer.email}, tier: ${tier}`);
+}
+
+async function markNotionSubscriptionCancelled(customerId) {
+  const results = await notion.databases.query({
+    database_id: CLIENT_PROFILES_DB,
+    filter: { property: 'Stripe Customer ID', rich_text: { equals: customerId } },
+  });
+
+  if (results.results[0]) {
+    await notion.pages.update({
+      page_id: results.results[0].id,
+      properties: {
+        'Subscription Status': { select: { name: 'Cancelled' } },
+      },
+    });
+    console.log(`Marked ${customerId} as Cancelled in Notion`);
+  }
+}
+
+async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).end('Method Not Allowed');
   }
@@ -133,7 +194,17 @@ export default async function handler(req, res) {
   }
 
   if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
+    const session = await stripe.checkout.sessions.retrieve(event.data.object.id, {
+      expand: ['customer', 'subscription', 'line_items'],
+    });
+
+    try {
+      await createNotionClientProfile(session);
+    } catch (err) {
+      console.error('Error creating Notion profile:', err.message);
+      // Don't block email sending on a Notion failure — log and continue.
+    }
+
     const toAddress = session.customer_email || session.customer_details?.email;
     const fullName = session.customer_details?.name || '';
     const firstName = fullName.split(' ')[0] || 'there';
@@ -166,6 +237,12 @@ export default async function handler(req, res) {
   } else if (event.type === 'customer.subscription.deleted') {
     const subscription = event.data.object;
     let toAddress, firstName;
+
+    try {
+      await markNotionSubscriptionCancelled(subscription.customer);
+    } catch (err) {
+      console.error('Error updating Notion on cancellation:', err.message);
+    }
 
     try {
       const customer = await stripe.customers.retrieve(subscription.customer);
@@ -208,3 +285,6 @@ Contractor Bid Prep`,
 
   return res.status(200).json({ received: true });
 }
+
+handler.config = { api: { bodyParser: false } };
+module.exports = handler;
