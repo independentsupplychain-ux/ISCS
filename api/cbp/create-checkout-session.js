@@ -33,6 +33,7 @@ module.exports = async (req, res) => {
       mode: mode || 'subscription',
       line_items: [{ price: priceId, quantity: 1 }],
       billing_address_collection: 'required',
+      allow_promotion_codes: true,
       success_url: 'https://contractorbidprep.com/contractorbidprep/portal/welcome.html?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'https://contractorbidprep.com/contractorbidprep/index.html#pricing',
     });
