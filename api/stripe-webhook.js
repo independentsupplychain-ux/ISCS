@@ -133,6 +133,7 @@ async function createNotionClientProfile(session) {
   const tier = PRICE_TO_TIER[priceId] || 'Bronze';
   const portalToken = crypto.randomUUID();
   const customer = session.customer;
+  const subscriptionId = session.subscription?.id || session.subscription || '';
 
   await notion.pages.create({
     parent: { database_id: CLIENT_PROFILES_DB },
@@ -145,7 +146,7 @@ async function createNotionClientProfile(session) {
       'Subscription Status': { select: { name: 'Active' } },
       'Stripe Customer ID': { rich_text: [{ text: { content: customer.id } }] },
       'Stripe Subscription ID': {
-        rich_text: [{ text: { content: session.subscription || '' } }],
+        rich_text: [{ text: { content: subscriptionId } }],
       },
       'Portal Token': { rich_text: [{ text: { content: portalToken } }] },
       'Onboarding Date': { date: { start: new Date().toISOString().split('T')[0] } },
