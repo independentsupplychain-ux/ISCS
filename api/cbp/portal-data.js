@@ -14,7 +14,7 @@ const { Client } = require('@notionhq/client');
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 
-const CLIENT_PROFILES_DB = '4ad603ac-a8c0-4282-ae1b-4d898abd55e7';
+const CLIENT_PROFILES_DB = '4ad603ac-a8c0-4282-ae1b-4d898abd15e7';
 const OPPORTUNITIES_DB   = 'f7982cdf-54c9-4a71-aaff-d60df39875cd';
 const BID_RECORDS_DB     = '02e6f549-c257-4889-bacd-37f29353be12';
 
@@ -57,7 +57,7 @@ module.exports = async (req, res) => {
     const profile = profileResults.results[0];
     const pp = profile.properties;
     const tier = prop(pp['Tier']);
-    const contractorName = prop(pp['Name']);
+    const contractorName = prop(pp['Contractor / Company']);
 
     // 2. Fetch open opportunities sorted by due date
     const opps = await notion.databases.query({
@@ -90,7 +90,7 @@ module.exports = async (req, res) => {
     return res.status(200).json({
       contractor: {
         name:             contractorName,
-        email:            prop(pp['Email']),
+        email:            prop(pp['Contact Email']),
         tier,
         stripeCustomerId: prop(pp['Stripe Customer ID']),
       },

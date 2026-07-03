@@ -31,7 +31,7 @@ const handler = async (req, res) => {
 
   const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
   const notion = new Client({ auth: process.env.NOTION_API_KEY });
-  const CLIENT_PROFILES_DB = '4ad603ac-a8c0-4282-ae1b-4d898abd55e7';
+  const CLIENT_PROFILES_DB = '4ad603ac-a8c0-4282-ae1b-4d898abd15e7';
 
   const PRICE_TO_TIER = {
     [process.env.BRONZE_MONTHLY_PRICE_ID]: 'Bronze',
@@ -68,10 +68,10 @@ const handler = async (req, res) => {
       await notion.pages.create({
         parent: { database_id: CLIENT_PROFILES_DB },
         properties: {
-          Name: {
+          'Contractor / Company': {
             title: [{ text: { content: customer.name || session.customer_details?.name || 'New Client' } }],
           },
-          Email: { email: customer.email || session.customer_details?.email },
+          'Contact Email': { email: customer.email || session.customer_details?.email },
           Tier: { select: { name: tier } },
           'Subscription Status': { select: { name: 'Active' } },
           'Stripe Customer ID': { rich_text: [{ text: { content: customer.id } }] },

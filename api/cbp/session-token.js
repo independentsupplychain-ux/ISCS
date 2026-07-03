@@ -15,7 +15,7 @@ const { Client } = require('@notionhq/client');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 
-const CLIENT_PROFILES_DB = '4ad603ac-a8c0-4282-ae1b-4d898abd55e7';
+const CLIENT_PROFILES_DB = '4ad603ac-a8c0-4282-ae1b-4d898abd15e7';
 
 const RETRY_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 1000;
