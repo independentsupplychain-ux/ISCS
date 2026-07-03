@@ -52,8 +52,18 @@ module.exports = async (req, res) => {
 
       const profile = results.results[0];
       if (profile) {
-        const token = profile.properties['Portal Token']?.rich_text?.map(t => t.plain_text).join('') || '';
-        if (token) return res.status(200).json({ token });
+        const pp = profile.properties;
+        const token = pp['Portal Token']?.rich_text?.map(t => t.plain_text).join('') || '';
+        if (token) {
+          return res.status(200).json({
+            token,
+            name: pp['Contractor / Company']?.title?.map(t => t.plain_text).join('') || '',
+            email: pp['Contact Email']?.email || '',
+            phone: pp['Contact Phone']?.phone_number || '',
+            trades: pp['Trade(s)']?.multi_select?.map(o => o.name) || [],
+            licenseNumber: pp['License Number']?.rich_text?.map(t => t.plain_text).join('') || '',
+          });
+        }
       }
 
       if (attempt < RETRY_ATTEMPTS) await sleep(RETRY_DELAY_MS);

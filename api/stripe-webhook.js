@@ -33,6 +33,21 @@ const PRICE_TO_TIER = {
   [process.env.GOLD_ANNUAL_PRICE_ID]:    'Gold',
 };
 
+const TRADE_VALUE_TO_LABEL = {
+  roofing: 'Roofing',
+  general_contracting: 'General Contracting',
+  hvac: 'HVAC',
+  electrical: 'Electrical',
+  plumbing: 'Plumbing',
+  other: 'Other',
+};
+
+function getCustomField(session, key) {
+  const field = session.custom_fields?.find(f => f.key === key);
+  if (!field) return null;
+  return field[field.type]?.value || null;
+}
+
 function getRawBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -137,22 +152,33 @@ async function createNotionClientProfile(session) {
   const customer = session.customer;
   const subscriptionId = session.subscription?.id || session.subscription || '';
 
+  const phone = getCustomField(session, 'phone_number');
+  const tradeValue = getCustomField(session, 'trade');
+  const tradeLabel = TRADE_VALUE_TO_LABEL[tradeValue] || null;
+  const licenseNumber = getCustomField(session, 'license_number');
+
+  const properties = {
+    'Contractor / Company': {
+      title: [{ text: { content: customer.name || session.customer_details?.name || 'New Client' } }],
+    },
+    'Contact Email': { email: customer.email || session.customer_details?.email },
+    Tier: { select: { name: tier } },
+    'Subscription Status': { select: { name: 'Active' } },
+    'Stripe Customer ID': { rich_text: [{ text: { content: customer.id } }] },
+    'Stripe Subscription ID': {
+      rich_text: [{ text: { content: subscriptionId } }],
+    },
+    'Portal Token': { rich_text: [{ text: { content: portalToken } }] },
+    'Onboarding Date': { date: { start: new Date().toISOString().split('T')[0] } },
+  };
+
+  if (phone) properties['Contact Phone'] = { phone_number: phone };
+  if (tradeLabel) properties['Trade(s)'] = { multi_select: [{ name: tradeLabel }] };
+  if (licenseNumber) properties['License Number'] = { rich_text: [{ text: { content: licenseNumber } }] };
+
   await notion.pages.create({
     parent: { database_id: CLIENT_PROFILES_DB },
-    properties: {
-      'Contractor / Company': {
-        title: [{ text: { content: customer.name || session.customer_details?.name || 'New Client' } }],
-      },
-      'Contact Email': { email: customer.email || session.customer_details?.email },
-      Tier: { select: { name: tier } },
-      'Subscription Status': { select: { name: 'Active' } },
-      'Stripe Customer ID': { rich_text: [{ text: { content: customer.id } }] },
-      'Stripe Subscription ID': {
-        rich_text: [{ text: { content: subscriptionId } }],
-      },
-      'Portal Token': { rich_text: [{ text: { content: portalToken } }] },
-      'Onboarding Date': { date: { start: new Date().toISOString().split('T')[0] } },
-    },
+    properties,
   });
 
   console.log(`Created Notion profile for ${customer.email}, tier: ${tier}`);

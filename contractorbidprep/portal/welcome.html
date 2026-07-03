@@ -138,6 +138,18 @@
 
     <hr class="divider" />
 
+    <p style="font-size:0.9rem;color:#4B5563;margin-bottom:0.5rem;">
+      Want to add service area, bond/insurance info, or other details? Complete your profile.
+    </p>
+    <p style="font-size:0.8rem;color:#9CA3AF;margin-bottom:1rem;">
+      Optional — you're already fully onboarded.
+    </p>
+    <a href="https://tally.so/r/Gxkvvz" id="complete-profile-link" class="btn-gold" style="font-size:0.9rem;padding:0.65rem 1.5rem;">
+      Complete Your Profile
+    </a>
+
+    <hr class="divider" />
+
     <p style="font-size:0.9rem;color:#4B5563;margin-bottom:1rem;">
       Know another contractor who could use this? Enroll a teammate.
     </p>
@@ -178,6 +190,9 @@
           link.href = `dashboard.html?token=${encodeURIComponent(data.token)}`;
           link.removeAttribute('disabled');
           link.textContent = 'Go to your dashboard';
+
+          // TODO: once Tally field IDs are confirmed (tally.so/r/Gxkvvz builder settings),
+          // append prefill query params to #complete-profile-link using data.name/email/phone/trades/licenseNumber
         } else {
           showSetupPending();
         }

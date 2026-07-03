@@ -34,6 +34,37 @@ module.exports = async (req, res) => {
       line_items: [{ price: priceId, quantity: 1 }],
       billing_address_collection: 'required',
       allow_promotion_codes: true,
+      custom_fields: [
+        {
+          key: 'phone_number',
+          label: { type: 'custom', custom: 'Mobile phone (for bid alerts)' },
+          type: 'text',
+          text: { minimum_length: 7, maximum_length: 20 },
+          optional: false,
+        },
+        {
+          key: 'trade',
+          label: { type: 'custom', custom: 'Trade' },
+          type: 'dropdown',
+          dropdown: {
+            options: [
+              { label: 'Roofing', value: 'roofing' },
+              { label: 'General Contracting', value: 'general_contracting' },
+              { label: 'HVAC', value: 'hvac' },
+              { label: 'Electrical', value: 'electrical' },
+              { label: 'Plumbing', value: 'plumbing' },
+              { label: 'Other', value: 'other' },
+            ],
+          },
+          optional: false,
+        },
+        {
+          key: 'license_number',
+          label: { type: 'custom', custom: 'FL/AL contractor license number' },
+          type: 'text',
+          optional: false,
+        },
+      ],
       success_url: 'https://contractorbidprep.com/contractorbidprep/portal/welcome.html?session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'https://contractorbidprep.com/contractorbidprep/index.html#pricing',
     });
