@@ -90,6 +90,17 @@
       color: #9CA3AF;
     }
     .footer-note a { color: #B8860B; text-decoration: none; }
+    .btn-gold[disabled] {
+      background: #D1B776;
+      cursor: default;
+      pointer-events: none;
+    }
+    .setup-note {
+      font-size: 0.9rem;
+      color: #4B5563;
+      margin-top: 1rem;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
@@ -118,7 +129,12 @@
       Reply with your number and we handle the rest.
     </p>
 
-    <a href="dashboard.html" class="btn-gold">Go to your dashboard</a>
+    <a href="dashboard.html" class="btn-gold" id="dashboard-link" disabled>Loading your dashboard&hellip;</a>
+    <p class="setup-note" id="setup-note" style="display:none;">
+      Your account is still being set up — check your email in a few minutes
+      for dashboard access, or contact
+      <a href="mailto:hello@contractorbidprep.com" style="color:#B8860B;">hello@contractorbidprep.com</a>.
+    </p>
 
     <hr class="divider" />
 
@@ -137,6 +153,39 @@
     </p>
 
   </div>
+
+  <script>
+    (async function () {
+      const link = document.getElementById('dashboard-link');
+      const note = document.getElementById('setup-note');
+      const sessionId = new URLSearchParams(window.location.search).get('session_id');
+
+      function showSetupPending() {
+        link.style.display = 'none';
+        note.style.display = 'block';
+      }
+
+      if (!sessionId) {
+        showSetupPending();
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/cbp/session-token?session_id=${encodeURIComponent(sessionId)}`);
+        const data = await res.json();
+
+        if (data.token) {
+          link.href = `dashboard.html?token=${encodeURIComponent(data.token)}`;
+          link.removeAttribute('disabled');
+          link.textContent = 'Go to your dashboard';
+        } else {
+          showSetupPending();
+        }
+      } catch (err) {
+        showSetupPending();
+      }
+    })();
+  </script>
 
 </body>
 </html>
