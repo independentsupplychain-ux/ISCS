@@ -22,7 +22,7 @@ const { Client } = require('@notionhq/client');
 const crypto = require('crypto');
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
-const CLIENT_PROFILES_DB = '4ad603ac-a8c0-4282-ae1b-4d898abd15e7';
+const CLIENT_PROFILES_DB = '948368a5-466a-4bf8-affb-083b7e8977d5';
 
 const PRICE_TO_TIER = {
   [process.env.BRONZE_MONTHLY_PRICE_ID]: 'Bronze',
