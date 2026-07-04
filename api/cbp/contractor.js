@@ -16,7 +16,7 @@
    ready to go live the moment the key is added.
    ============================================================ */
 
-const CLIENT_PROFILES_DB_ID = process.env.NOTION_CLIENT_PROFILES_DB_ID || '4ad603ac-a8c0-4282-ae1b-4d898abd15e7';
+const CLIENT_PROFILES_DB_ID = process.env.NOTION_CLIENT_PROFILES_DB_ID || '948368a5-466a-4bf8-affb-083b7e8977d5';
 const OPPORTUNITIES_DB_ID   = process.env.NOTION_OPPORTUNITIES_DB_ID   || 'f7982cdf-54c9-4a71-aaff-d60df39875cd';
 const NOTION_VERSION        = '2022-06-28';
 const VALID_STATUSES        = ['Active', 'Trial'];
