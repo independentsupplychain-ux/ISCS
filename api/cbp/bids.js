@@ -8,7 +8,7 @@
      NOTION_API_KEY
    ============================================================ */
 
-const NOTION_DB_ID   = 'f7982cdf-54c9-4a71-aaff-d60df39875cd';
+const NOTION_DB_ID   = 'dc9a3b8c-3f94-4f9c-a405-947e7f0f900f';
 const NOTION_VERSION = '2022-06-28';
 
 async function notionPost(path, body) {

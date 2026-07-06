@@ -17,7 +17,7 @@
    ============================================================ */
 
 const CLIENT_PROFILES_DB_ID = process.env.NOTION_CLIENT_PROFILES_DB_ID || '948368a5-466a-4bf8-affb-083b7e8977d5';
-const OPPORTUNITIES_DB_ID   = process.env.NOTION_OPPORTUNITIES_DB_ID   || 'f7982cdf-54c9-4a71-aaff-d60df39875cd';
+const OPPORTUNITIES_DB_ID   = process.env.NOTION_OPPORTUNITIES_DB_ID   || 'dc9a3b8c-3f94-4f9c-a405-947e7f0f900f';
 const NOTION_VERSION        = '2022-06-28';
 const VALID_STATUSES        = ['Active', 'Trial'];
 
@@ -149,30 +149,30 @@ const MOCK_OPPORTUNITIES = [
 
 // ---- Matching logic ----
 //
-// v1: contractor sees a bid if:
-//   - Trade Category intersects the contractor's Trade(s), AND
-//   - County / Region is in the contractor's Service Area
+// v2 (July 2026 pivot): Geography is the ONLY hard gate.
+//   - Trade/license category is informational/tag-only — contractors often
+//     hold multiple licenses (e.g. GC + Roofing), so hard-filtering on trade
+//     caused false negatives and excluded valid matches. Trade is still
+//     returned on each opportunity so the UI/emails can tag it, it just no
+//     longer gates visibility.
+//   - County / Region must be in the contractor's Service Area (Bronze =
+//     county-level, Silver/Gold = statewide FL).
 //
-// TODO (v2 — statewide license support):
+// TODO (v3 — statewide license support):
 //   Once a "License Tier by Trade" field is added to Client Profiles
 //   (e.g. { Roofing: 'statewide', 'General Contracting': 'county' }),
-//   replace the county check with:
+//   replace the flat county check with:
 //
 //     const isStatewide = contractor.licenseTierByTrade?.[trade] === 'statewide';
 //     const countyOk = isStatewide || contractor.serviceArea.includes(opp.county);
 //
 //   This will allow certified (statewide) contractors to see opportunities
 //   across ALL counties for their statewide-licensed trade while remaining
-//   county-limited for other trades. One-line change per trade iteration.
+//   county-limited for other trades.
 
 function matchesContractor(opp, contractor) {
-  const tradesToCheck = Array.isArray(opp.tradeCategory) ? opp.tradeCategory : [];
-  const tradeMatch = tradesToCheck.some(t => contractor.trades.includes(t));
-  if (!tradeMatch) return false;
-
-  // v1 county filter (see TODO above for statewide upgrade path)
-  const countyMatch = contractor.serviceArea.includes(opp.county);
-  return countyMatch;
+  // Geography is the sole hard gate.
+  return contractor.serviceArea.includes(opp.county);
 }
 
 // ---- Handler ----
