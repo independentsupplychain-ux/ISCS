@@ -25,12 +25,12 @@ const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const CLIENT_PROFILES_DB = '948368a5-466a-4bf8-affb-083b7e8977d5';
 
 const PRICE_TO_TIER = {
-  [process.env.BRONZE_MONTHLY_PRICE_ID]: 'Bronze',
-  [process.env.SILVER_MONTHLY_PRICE_ID]: 'Silver',
-  [process.env.GOLD_MONTHLY_PRICE_ID]:   'Gold',
-  [process.env.BRONZE_ANNUAL_PRICE_ID]:  'Bronze',
-  [process.env.SILVER_ANNUAL_PRICE_ID]:  'Silver',
-  [process.env.GOLD_ANNUAL_PRICE_ID]:    'Gold',
+  [process.env.STRIPE_PRICE_BRONZE]: 'Bronze',
+  [process.env.STRIPE_PRICE_SILVER]: 'Silver',
+  [process.env.STRIPE_PRICE_GOLD]:   'Gold',
+  [process.env.STRIPE_PRICE_BRONZE_ANNUAL]:  'Bronze',
+  [process.env.STRIPE_PRICE_SILVER_ANNUAL]:  'Silver',
+  [process.env.STRIPE_PRICE_GOLD_ANNUAL]:    'Gold',
 };
 
 const TRADE_VALUE_TO_LABEL = {
