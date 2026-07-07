@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Open Opportunities — Contractors Bid Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="portal-shell.css" />
+</head>
+<body>
+
+  <div id="portal-loading" class="portal-loading">
+    <div class="spinner"></div>
+    <p>Loading your portal...</p>
+  </div>
+
+  <div id="portal-denied" class="portal-denied">
+    <div class="portal-denied-card">
+      <img src="../../assets/logo.png" alt="Contractors Bid Prep" onerror="this.style.display='none'" />
+      <h1>Portal Access Not Found</h1>
+      <p>
+        This link is missing or no longer active.<br><br>
+        If you're a CBP subscriber, check your welcome email for your unique portal link, or
+        <a href="mailto:info@contractorbidprep.com">contact our team</a> for help.
+      </p>
+    </div>
+  </div>
+
+  <div id="portal-shell" class="portal-shell">
+
+    <header class="portal-topbar">
+      <div class="portal-topbar-inner">
+        <div class="portal-logo">
+          <img src="../../assets/logo.png" alt="CBP" onerror="this.style.display='none'" />
+          <span class="portal-logo-text">Contractors<br>Bid Prep</span>
+        </div>
+        <div class="portal-user">
+          <span id="portal-user-name" class="portal-user-name"></span>
+          <span id="portal-tier-badge" class="tier-badge"></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="portal-body">
+      <aside class="portal-sidebar">
+        <nav id="portal-nav"></nav>
+        <div class="portal-sidebar-footer">
+          <a id="portal-manage-link" href="#" class="portal-manage-link" style="display:none;">Manage Subscription</a>
+        </div>
+      </aside>
+
+      <main class="portal-main">
+        <div class="portal-page-header">
+          <h1>Open Opportunities</h1>
+          <p>Live matched bid opportunities, searchable in the portal.</p>
+        </div>
+
+        <div class="coming-soon-card">
+          <span class="coming-soon-badge">Coming Soon</span>
+          <h2>Open Opportunities is on the way</h2>
+          <p>
+            A searchable, filterable view of your matched bid opportunities is being built for this
+            section. In the meantime, your weekly matched opportunities still arrive by text and email
+            on the usual Sunday schedule.
+          </p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="portal-shell.js"></script>
+  <script>
+    cbpInitPortal('opportunities');
+  </script>
+</body>
+</html>

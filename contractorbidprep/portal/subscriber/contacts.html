@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Contacts — Contractors Bid Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="portal-shell.css" />
+</head>
+<body>
+
+  <div id="portal-loading" class="portal-loading">
+    <div class="spinner"></div>
+    <p>Loading your portal...</p>
+  </div>
+
+  <div id="portal-denied" class="portal-denied">
+    <div class="portal-denied-card">
+      <img src="../../assets/logo.png" alt="Contractors Bid Prep" onerror="this.style.display='none'" />
+      <h1>Portal Access Not Found</h1>
+      <p>
+        This link is missing or no longer active.<br><br>
+        If you're a CBP subscriber, check your welcome email for your unique portal link, or
+        <a href="mailto:info@contractorbidprep.com">contact our team</a> for help.
+      </p>
+    </div>
+  </div>
+
+  <div id="portal-shell" class="portal-shell">
+
+    <header class="portal-topbar">
+      <div class="portal-topbar-inner">
+        <div class="portal-logo">
+          <img src="../../assets/logo.png" alt="CBP" onerror="this.style.display='none'" />
+          <span class="portal-logo-text">Contractors<br>Bid Prep</span>
+        </div>
+        <div class="portal-user">
+          <span id="portal-user-name" class="portal-user-name"></span>
+          <span id="portal-tier-badge" class="tier-badge"></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="portal-body">
+      <aside class="portal-sidebar">
+        <nav id="portal-nav"></nav>
+        <div class="portal-sidebar-footer">
+          <a id="portal-manage-link" href="#" class="portal-manage-link" style="display:none;">Manage Subscription</a>
+        </div>
+      </aside>
+
+      <main class="portal-main">
+        <div class="portal-page-header">
+          <h1>Business Contacts</h1>
+          <p>Bonding, insurance, and subcontractor contacts for the region.</p>
+        </div>
+
+        <div class="portal-placeholder">
+          <div class="portal-placeholder-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h2>Business Contacts Directory</h2>
+          <p>Vetted bonding agents, insurance brokers, and subcontractor partners across the Gulf Coast region will live here — content is being drafted separately and will be wired in after.</p>
+          <span class="portal-placeholder-tag">Content Pending</span>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="portal-shell.js"></script>
+  <script>
+    cbpInitPortal('contacts');
+  </script>
+</body>
+</html>
