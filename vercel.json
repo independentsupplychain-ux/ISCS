@@ -30,7 +30,7 @@
     },
     {
       "src": "/portal/(.*)",
-      "dest": "/portal/bid-portal.html"
+      "dest": "/contractorbidprep/portal/bid-portal.html"
     },
     {
       "src": "/",

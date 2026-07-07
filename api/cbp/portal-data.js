@@ -14,9 +14,9 @@ const { Client } = require('@notionhq/client');
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 
-const CLIENT_PROFILES_DB = '4ad603ac-a8c0-4282-ae1b-4d898abd15e7';
-const OPPORTUNITIES_DB   = 'f7982cdf-54c9-4a71-aaff-d60df39875cd';
-const BID_RECORDS_DB     = '02e6f549-c257-4889-bacd-37f29353be12';
+const CLIENT_PROFILES_DB = '948368a5-466a-4bf8-affb-083b7e8977d5';
+const OPPORTUNITIES_DB   = 'dc9a3b8c-3f94-4f9c-a405-947e7f0f900f';
+const BID_RECORDS_DB     = '0566f8a4-07bf-4e7e-9d8e-378d49bcbd89';
 
 function prop(p) {
   if (!p) return null;

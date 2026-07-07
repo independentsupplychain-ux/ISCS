@@ -9,186 +9,94 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/styles.css" />
   <style>
-    .tier-badge {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-      background: #C9A84C;
-      color: #1B2A4A;
-      margin-left: 0.5rem;
-      vertical-align: middle;
-    }
-    .opp-card {
-      background: #fff;
-      border: 1px solid #E5E7EB;
-      border-radius: 8px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 0.75rem;
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #1B2A4A;
+      margin: 0;
+      min-height: 100vh;
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-    .opp-card-body { flex: 1; }
-    .opp-title {
-      font-weight: 600;
-      color: #1B2A4A;
-      font-size: 0.95rem;
-      margin-bottom: 0.25rem;
-    }
-    .opp-meta {
-      font-size: 0.8rem;
-      color: #6B7280;
-    }
-    .opp-meta span { margin-right: 1rem; }
-    .opp-link {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #C9A84C;
-      text-decoration: none;
-      white-space: nowrap;
-      align-self: center;
-    }
-    .opp-link:hover { text-decoration: underline; }
-    .status-badge {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 0.15rem 0.5rem;
-      border-radius: 999px;
-    }
-    .status-submitted { background: #D1FAE5; color: #065F46; }
-    .status-review    { background: #FEF3C7; color: #92400E; }
-    .status-no-response { background: #F3F4F6; color: #6B7280; }
-    .manage-btn {
-      display: inline-block;
-      background: none;
-      border: 2px solid #1B2A4A;
-      color: #1B2A4A;
-      font-family: inherit;
-      font-size: 0.875rem;
-      font-weight: 600;
-      padding: 0.625rem 1.25rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-    }
-    .manage-btn:hover { background: #1B2A4A; color: #fff; }
-    .manage-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .section-heading {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #1B2A4A;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid #F3F4F6;
-    }
-    .dashboard-section { margin-bottom: 2rem; }
-    .empty-state {
-      text-align: center;
-      padding: 2rem;
-      color: #6B7280;
-      font-size: 0.9rem;
-      background: #F9FAFB;
-      border-radius: 8px;
-    }
-    .bid-history-row {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid #F3F4F6;
-      font-size: 0.875rem;
+      justify-content: center;
+      padding: 2rem 1.5rem;
     }
-    .bid-history-row:last-child { border-bottom: none; }
-    .bid-history-wrap {
-      border: 1px solid #E5E7EB;
+    .cs-card {
+      background: #fff;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 100%;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .cs-logo {
+      width: 72px;
+      height: 72px;
       border-radius: 8px;
-      overflow: hidden;
+      margin-bottom: 1.5rem;
     }
-    .bid-opp-name { font-weight: 500; color: #1B2A4A; }
-    .bid-amount   { color: #374151; }
+    .cs-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #C9A84C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.5rem;
+    }
+    h1 {
+      color: #1B2A4A;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin: 0 0 0.75rem;
+    }
+    p {
+      color: #4B5563;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0 0 1.5rem;
+    }
+    .cs-note {
+      font-size: 0.85rem;
+      color: #9CA3AF;
+      margin-bottom: 1.75rem;
+    }
+    .cs-divider {
+      border: none;
+      border-top: 1px solid #E5E7EB;
+      margin: 1.75rem 0;
+    }
+    .cs-footer {
+      font-size: 0.85rem;
+      color: #6B7280;
+    }
+    .cs-footer a {
+      color: #C9A84C;
+      font-weight: 600;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-
-  <div class="dashboard-layout">
-
-    <!-- ===== HEADER ===== -->
-    <header class="dash-header">
-      <div class="dash-header-inner">
-        <div class="dash-logo">
-          <img src="../assets/logo.png" alt="CBP" onerror="this.style.display='none'" />
-          <span class="dash-logo-text">Contractors<br>Bid Prep</span>
-        </div>
-        <div class="dash-user">
-          <span id="user-name-display">Loading...</span>
-          <span id="tier-badge-header"></span>
-          <div class="dash-avatar" id="user-avatar">?</div>
-        </div>
-      </div>
-    </header>
-
-    <!-- ===== MAIN ===== -->
-    <main class="dash-main">
-
-      <!-- Loading state -->
-      <div id="state-loading" class="bids-loading" style="display:flex;">
-        <div class="spinner"></div>
-        <p>Loading your dashboard...</p>
-      </div>
-
-      <!-- Error state -->
-      <div id="state-error" style="display:none;" class="bids-empty">
-        <p style="font-size:2rem;margin-bottom:0.5rem;">&#x26A0;&#xFE0F;</p>
-        <p style="font-weight:600;color:#374151;">Couldn't load your dashboard.</p>
-        <p style="font-size:0.875rem;margin-top:0.5rem;color:#6B7280;">
-          Try refreshing or contact
-          <a href="mailto:hello@contractorbidprep.com" style="color:#C9A84C;">hello@contractorbidprep.com</a>
-        </p>
-      </div>
-
-      <!-- Dashboard content (hidden until data loads) -->
-      <div id="state-content" style="display:none;">
-
-        <!-- Welcome -->
-        <div class="dash-welcome">
-          <h1>Good to see you, <span id="welcome-name" class="text-gold">—</span></h1>
-          <p>Here are your active bid opportunities pulled live from the Contractor Bid Prep database.</p>
-        </div>
-
-        <!-- Active Opportunities -->
-        <div class="dashboard-section">
-          <h2 class="section-heading">Active Opportunities</h2>
-          <div id="opps-container"></div>
-        </div>
-
-        <!-- Bid History (Gold only, rendered if threads exist) -->
-        <div class="dashboard-section" id="bid-history-section" style="display:none;">
-          <h2 class="section-heading">Bid History</h2>
-          <div class="bid-history-wrap" id="bid-history-container"></div>
-        </div>
-
-        <!-- Manage Subscription -->
-        <div class="dashboard-section">
-          <h2 class="section-heading">Subscription</h2>
-          <p style="font-size:0.875rem;color:#6B7280;margin-bottom:1rem;">
-            Update payment method, download invoices, or cancel your plan.
-          </p>
-          <button class="manage-btn" id="manage-btn" onclick="openBillingPortal()">
-            Manage subscription
-          </button>
-        </div>
-
-      </div><!-- /state-content -->
-
-    </main>
+  <div class="cs-card">
+    <img src="../../CBP_Logo.png" alt="Contractor Bid Prep" class="cs-logo" onerror="this.style.display='none'" />
+    <div class="cs-icon">🚧</div>
+    <h1>Your dashboard is almost ready.</h1>
+    <p>
+      We're building out your Subscriber Portal — bid templates, market intel, and
+      business resources, all in one place. It's not quite ready yet, but your bid
+      alerts are already live and working.
+    </p>
+    <p class="cs-note">
+      Check your email for current opportunities in your area. Your weekly alert
+      goes out every Sunday at 7:45 PM CT.
+    </p>
+    <hr class="cs-divider" />
+    <p class="cs-footer">
+      Questions in the meantime? Email us at
+      <a href="mailto:hello@contractorbidprep.com">hello@contractorbidprep.com</a>
+    </p>
   </div>
-
-  <script src="../js/dashboard.js"></script>
 </body>
 </html>

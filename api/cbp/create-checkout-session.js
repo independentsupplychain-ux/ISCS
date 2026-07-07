@@ -49,7 +49,7 @@ module.exports = async (req, res) => {
           dropdown: {
             options: [
               { label: 'Roofing', value: 'roofing' },
-              { label: 'General Contracting', value: 'general_contracting' },
+              { label: 'General Contracting', value: 'generalContracting' },
               { label: 'HVAC', value: 'hvac' },
               { label: 'Electrical', value: 'electrical' },
               { label: 'Plumbing', value: 'plumbing' },
