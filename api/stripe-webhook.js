@@ -2,11 +2,15 @@
 //   STRIPE_WEBHOOK_SECRET  — signing secret from the Stripe Webhooks dashboard
 //   STRIPE_SECRET_KEY      — Stripe secret key
 //   RESEND_API_KEY         — API key from resend.com
-//   NOTION_API_KEY         — Notion internal integration token
-//   APIFY_ACTOR_ID         — Apify actor ID for the DemandStar scraper
-//   APIFY_API_TOKEN        — Apify API token
-//   BRONZE_MONTHLY_PRICE_ID, SILVER_MONTHLY_PRICE_ID, GOLD_MONTHLY_PRICE_ID
-//   BRONZE_ANNUAL_PRICE_ID, SILVER_ANNUAL_PRICE_ID, GOLD_ANNUAL_PRICE_ID
+//   NOTION_API_KEY         — Notion internal integration token (also used to read CBP Opportunities DB)
+//   STRIPE_PRICE_BRONZE, STRIPE_PRICE_SILVER, STRIPE_PRICE_GOLD
+//   STRIPE_PRICE_BRONZE_ANNUAL, STRIPE_PRICE_SILVER_ANNUAL, STRIPE_PRICE_GOLD_ANNUAL
+//
+// NOTE: Opportunity emails are read from the Notion "CBP Opportunities" database
+// (dc9a3b8c-3f94-4f9c-a405-947e7f0f900f), NOT fetched live from Apify. Apify's weekly
+// scrape writes into that Notion DB on its own schedule; this webhook only reads it.
+// This keeps signup emails independent of Apify's live run status — if a scrape run
+// fails, existing "Open" opportunities already in Notion are still sent.
 //
 // contractorbidprep.com must be verified as a sending domain in the Resend dashboard
 // before emails will deliver.
@@ -22,15 +26,15 @@ const { Client } = require('@notionhq/client');
 const crypto = require('crypto');
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
-const CLIENT_PROFILES_DB = '4ad603ac-a8c0-4282-ae1b-4d898abd15e7';
+const CLIENT_PROFILES_DB = '948368a5-466a-4bf8-affb-083b7e8977d5';
 
 const PRICE_TO_TIER = {
-  [process.env.BRONZE_MONTHLY_PRICE_ID]: 'Bronze',
-  [process.env.SILVER_MONTHLY_PRICE_ID]: 'Silver',
-  [process.env.GOLD_MONTHLY_PRICE_ID]:   'Gold',
-  [process.env.BRONZE_ANNUAL_PRICE_ID]:  'Bronze',
-  [process.env.SILVER_ANNUAL_PRICE_ID]:  'Silver',
-  [process.env.GOLD_ANNUAL_PRICE_ID]:    'Gold',
+  [process.env.STRIPE_PRICE_BRONZE]: 'Bronze',
+  [process.env.STRIPE_PRICE_SILVER]: 'Silver',
+  [process.env.STRIPE_PRICE_GOLD]:   'Gold',
+  [process.env.STRIPE_PRICE_BRONZE_ANNUAL]:  'Bronze',
+  [process.env.STRIPE_PRICE_SILVER_ANNUAL]:  'Silver',
+  [process.env.STRIPE_PRICE_GOLD_ANNUAL]:    'Gold',
 };
 
 const TRADE_VALUE_TO_LABEL = {
@@ -84,13 +88,37 @@ contractorbidprep.com`,
   };
 }
 
+const OPPORTUNITIES_DB_ID = 'dc9a3b8c-3f94-4f9c-a405-947e7f0f900f';
+const MAX_BID_ITEMS_IN_EMAIL = 20;
+
 async function fetchBidOpportunities() {
-  const actorId = process.env.APIFY_ACTOR_ID;
-  const token = process.env.APIFY_API_TOKEN;
-  const url = `https://api.apify.com/v2/acts/${actorId}/runs/last/dataset/items?token=${token}`;
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Apify responded ${response.status}`);
-  return response.json();
+  const notionKey = process.env.NOTION_API_KEY;
+  const response = await fetch(`https://api.notion.com/v1/databases/${OPPORTUNITIES_DB_ID}/query`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${notionKey}`,
+      'Notion-Version': '2022-06-28',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      filter: { property: 'Status', select: { equals: 'Open' } },
+      sorts: [{ property: 'Due Date', direction: 'ascending' }],
+      page_size: MAX_BID_ITEMS_IN_EMAIL,
+    }),
+  });
+  if (!response.ok) throw new Error(`Notion Opportunities query responded ${response.status}`);
+  const data = await response.json();
+
+  return (data.results || []).map((page) => {
+    const p = page.properties;
+    return {
+      opportunity_title: p['Opportunity Title']?.title?.map(t => t.plain_text).join('') || '',
+      agency_name:       p['Agency']?.rich_text?.map(t => t.plain_text).join('') || '',
+      due_date:          p['Due Date']?.date?.start || '',
+      estimated_value:   p['Estimated Value']?.number ?? '',
+      portal_link:       p['Portal Link']?.url || '',
+    };
+  });
 }
 
 function formatBidsText(items) {
@@ -99,6 +127,26 @@ function formatBidsText(items) {
       (item) =>
         `---\n${item.opportunity_title || '(No title)'}\nAgency: ${item.agency_name || '—'}\nDue: ${item.due_date || '—'}\nEst. Value: ${item.estimated_value || '—'}\nLink: ${item.portal_link || '—'}\n---`
     )
+    .join('\n\n');
+}
+
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function formatBidsHtml(items) {
+  return items
+    .map((item) => {
+      const title = escapeHtml(item.opportunity_title || '(No title)');
+      const titleHtml = item.portal_link
+        ? `<a href="${escapeHtml(item.portal_link)}">${title}</a>`
+        : title;
+      return `---\n${titleHtml}\nAgency: ${escapeHtml(item.agency_name || '—')}\nDue: ${escapeHtml(item.due_date || '—')}\nEst. Value: ${escapeHtml(item.estimated_value || '—')}\n---`;
+    })
     .join('\n\n');
 }
 
@@ -124,24 +172,26 @@ async function buildBidsEmail(toAddress, firstName) {
   try {
     items = await fetchBidOpportunities();
   } catch (err) {
-    console.warn('Apify fetch failed, falling back to no-bids email:', err.message);
+    console.warn('Notion Opportunities fetch failed, falling back to no-bids email:', err.message);
     fetchFailed = true;
   }
 
   if (fetchFailed || !Array.isArray(items) || items.length === 0) {
-    if (!fetchFailed) console.warn('Apify returned no bid items, sending no-bids fallback email');
+    if (!fetchFailed) console.warn('Notion Opportunities query returned no open items, sending no-bids fallback email');
     return buildNoBidsEmail(toAddress, firstName);
   }
 
-  const body =
-    "Here's what's active right now. Your weekly alerts start this Sunday — you'll get updates like this every week automatically.\n\n" +
-    formatBidsText(items);
+  const intro = "Here's what's active right now. Your weekly alerts start this Sunday — you'll get updates like this every week automatically.";
+
+  const body = `${intro}\n\n${formatBidsText(items)}`;
+  const html = `<pre style="white-space:pre-wrap;font-family:inherit;margin:0;">${escapeHtml(intro)}\n\n${formatBidsHtml(items)}</pre>`;
 
   return {
     from: 'David Duncan <davidduncan@contractorbidprep.com>',
     to: toAddress,
     subject: 'Current bid opportunities in your area',
     text: body,
+    html,
   };
 }
 
