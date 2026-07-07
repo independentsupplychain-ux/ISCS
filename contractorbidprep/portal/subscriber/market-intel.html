@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Market Intel — Contractors Bid Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="portal-shell.css" />
+</head>
+<body>
+
+  <div id="portal-loading" class="portal-loading">
+    <div class="spinner"></div>
+    <p>Loading your portal...</p>
+  </div>
+
+  <div id="portal-denied" class="portal-denied">
+    <div class="portal-denied-card">
+      <img src="../../assets/logo.png" alt="Contractors Bid Prep" onerror="this.style.display='none'" />
+      <h1>Portal Access Not Found</h1>
+      <p>
+        This link is missing or no longer active.<br><br>
+        If you're a CBP subscriber, check your welcome email for your unique portal link, or
+        <a href="mailto:info@contractorbidprep.com">contact our team</a> for help.
+      </p>
+    </div>
+  </div>
+
+  <div id="portal-shell" class="portal-shell">
+
+    <header class="portal-topbar">
+      <div class="portal-topbar-inner">
+        <div class="portal-logo">
+          <img src="../../assets/logo.png" alt="CBP" onerror="this.style.display='none'" />
+          <span class="portal-logo-text">Contractors<br>Bid Prep</span>
+        </div>
+        <div class="portal-user">
+          <span id="portal-user-name" class="portal-user-name"></span>
+          <span id="portal-tier-badge" class="tier-badge"></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="portal-body">
+      <aside class="portal-sidebar">
+        <nav id="portal-nav"></nav>
+        <div class="portal-sidebar-footer">
+          <a id="portal-manage-link" href="#" class="portal-manage-link" style="display:none;">Manage Subscription</a>
+        </div>
+      </aside>
+
+      <main class="portal-main">
+        <div class="portal-page-header">
+          <h1>Market Intel</h1>
+          <p>Gulf Coast procurement trends and agency spending insight.</p>
+        </div>
+
+        <div class="portal-placeholder">
+          <div class="portal-placeholder-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <h2>Market Intel</h2>
+          <p>Agency spending trends, seasonal bid volume, and regional procurement insight will live here — content is being drafted separately and will be wired in after.</p>
+          <span class="portal-placeholder-tag">Content Pending</span>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="portal-shell.js"></script>
+  <script>
+    cbpInitPortal('market-intel');
+  </script>
+</body>
+</html>

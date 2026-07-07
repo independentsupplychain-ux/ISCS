@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bid Templates — Contractors Bid Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="portal-shell.css" />
+</head>
+<body>
+
+  <!-- ===== Loading ===== -->
+  <div id="portal-loading" class="portal-loading">
+    <div class="spinner"></div>
+    <p>Loading your portal...</p>
+  </div>
+
+  <!-- ===== Denied / no token ===== -->
+  <div id="portal-denied" class="portal-denied">
+    <div class="portal-denied-card">
+      <img src="../../assets/logo.png" alt="Contractors Bid Prep" onerror="this.style.display='none'" />
+      <h1>Portal Access Not Found</h1>
+      <p>
+        This link is missing or no longer active.<br><br>
+        If you're a CBP subscriber, check your welcome email for your unique portal link, or
+        <a href="mailto:info@contractorbidprep.com">contact our team</a> for help.
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== Portal shell ===== -->
+  <div id="portal-shell" class="portal-shell">
+
+    <header class="portal-topbar">
+      <div class="portal-topbar-inner">
+        <div class="portal-logo">
+          <img src="../../assets/logo.png" alt="CBP" onerror="this.style.display='none'" />
+          <span class="portal-logo-text">Contractors<br>Bid Prep</span>
+        </div>
+        <div class="portal-user">
+          <span id="portal-user-name" class="portal-user-name"></span>
+          <span id="portal-tier-badge" class="tier-badge"></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="portal-body">
+      <aside class="portal-sidebar">
+        <nav id="portal-nav"></nav>
+        <div class="portal-sidebar-footer">
+          <a id="portal-manage-link" href="#" class="portal-manage-link" style="display:none;">Manage Subscription</a>
+        </div>
+      </aside>
+
+      <main class="portal-main">
+        <div class="portal-page-header">
+          <h1>Bid Templates</h1>
+          <p>Ready-to-use document templates for your bid submissions.</p>
+        </div>
+
+        <!-- ===== Silver tier view (lighter) ===== -->
+        <section id="tier-view-silver" class="tier-view">
+          <div class="tier-view-banner">
+            <p>You're viewing the <strong>Silver</strong> template set. Gold unlocks the full library plus fillable, pre-populated versions.</p>
+            <a href="mailto:info@contractorbidprep.com" class="btn btn-gold">Ask About Gold</a>
+          </div>
+
+          <div class="portal-placeholder">
+            <div class="portal-placeholder-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <h2>Silver Template Library</h2>
+            <p>Core bid templates for Silver subscribers will live here — content is being drafted separately and will be wired in after.</p>
+            <span class="portal-placeholder-tag">Content Pending</span>
+          </div>
+        </section>
+
+        <!-- ===== Gold tier view (full) ===== -->
+        <section id="tier-view-gold" class="tier-view">
+          <div class="portal-placeholder">
+            <div class="portal-placeholder-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <h2>Full Gold Template Library</h2>
+            <p>Complete template library plus fillable, pre-populated bid documents for Gold subscribers will live here — content is being drafted separately and will be wired in after.</p>
+            <span class="portal-placeholder-tag">Content Pending</span>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="portal-shell.js"></script>
+  <script>
+    cbpInitPortal('templates', (subscriber) => {
+      const silverView = document.getElementById('tier-view-silver');
+      const goldView = document.getElementById('tier-view-gold');
+      if (subscriber.tier === 'Gold') {
+        goldView.classList.add('active');
+      } else {
+        silverView.classList.add('active');
+      }
+    });
+  </script>
+</body>
+</html>

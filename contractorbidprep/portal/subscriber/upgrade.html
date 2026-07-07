@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upgrade — Contractors Bid Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="portal-shell.css" />
+  <style>
+    .upgrade-page {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .upgrade-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 3rem 2.5rem;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .upgrade-card img { height: 56px; margin: 0 auto 1.5rem; }
+    .upgrade-lock {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(201,168,76,0.12);
+      color: var(--gold-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+    .upgrade-card h1 { font-size: 1.35rem; color: var(--navy); margin-bottom: 0.6rem; }
+    .upgrade-card p { font-size: 0.9rem; color: #6B7280; line-height: 1.7; margin-bottom: 1.5rem; }
+    .upgrade-actions { display: flex; flex-direction: column; gap: 0.65rem; }
+    .upgrade-actions .btn { width: 100%; }
+    .upgrade-footer { margin-top: 1.5rem; font-size: 0.82rem; color: #9CA3AF; }
+    .upgrade-footer a { color: var(--gold-dark); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div class="upgrade-page">
+    <div class="upgrade-card">
+      <img src="../../assets/logo.png" alt="Contractors Bid Prep" onerror="this.style.display='none'" />
+
+      <div id="upgrade-loading">
+        <div class="spinner" style="margin: 0 auto;"></div>
+      </div>
+
+      <!-- Bronze / no recognized paid tier -->
+      <div id="upgrade-locked" style="display:none;">
+        <div class="upgrade-lock">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h1>The Subscriber Portal is a Silver &amp; Gold benefit</h1>
+        <p id="upgrade-copy">
+          Bid Templates, Market Intel, How-Tos, and Business Contacts are included with the Silver
+          and Gold plans. Upgrade to unlock the full Subscriber Portal.
+        </p>
+        <div class="upgrade-actions">
+          <a href="https://contractorbidprep.com/#pricing" class="btn btn-gold">View Plans &amp; Upgrade</a>
+          <button id="manage-billing-btn" class="btn btn-navy" style="display:none;" onclick="upgradeManageBilling()">Manage Billing</button>
+        </div>
+      </div>
+
+      <!-- Already Silver/Gold — landed here by mistake -->
+      <div id="upgrade-already" style="display:none;">
+        <h1>You already have portal access</h1>
+        <p>Your subscription already includes the Subscriber Portal.</p>
+        <div class="upgrade-actions">
+          <a id="upgrade-go-to-portal" href="#" class="btn btn-gold">Go to the Portal</a>
+        </div>
+      </div>
+
+      <!-- No token / error -->
+      <div id="upgrade-denied" style="display:none;">
+        <h1>Portal Access Not Found</h1>
+        <p>
+          This link is missing or no longer active. Check your welcome email for your unique portal
+          link, or <a href="mailto:info@contractorbidprep.com" style="color:var(--gold-dark);font-weight:600;">contact our team</a> for help.
+        </p>
+      </div>
+
+      <p class="upgrade-footer">
+        Questions? Email <a href="mailto:info@contractorbidprep.com">info@contractorbidprep.com</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="portal-shell.js"></script>
+  <script>
+    let upgradeCustomerId = null;
+
+    function upgradeShow(id) {
+      ['upgrade-loading', 'upgrade-locked', 'upgrade-already', 'upgrade-denied'].forEach(el => {
+        document.getElementById(el).style.display = el === id ? 'block' : 'none';
+      });
+    }
+
+    async function upgradeManageBilling() {
+      if (!upgradeCustomerId) return;
+      await cbpOpenBillingPortal(upgradeCustomerId);
+    }
+
+    (async function init() {
+      const token = cbpGetToken();
+      if (!token) {
+        upgradeShow('upgrade-denied');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/cbp/portal-auth?token=${encodeURIComponent(token)}`);
+        if (res.status === 404) {
+          upgradeShow('upgrade-denied');
+          return;
+        }
+        if (!res.ok) throw new Error(`Server error ${res.status}`);
+
+        const subscriber = await res.json();
+        upgradeCustomerId = subscriber.stripeCustomerId || null;
+
+        if (subscriber.tier === 'Silver' || subscriber.tier === 'Gold') {
+          document.getElementById('upgrade-go-to-portal').href = cbpWithToken('/portal/templates');
+          upgradeShow('upgrade-already');
+          return;
+        }
+
+        if (upgradeCustomerId) {
+          document.getElementById('manage-billing-btn').style.display = 'block';
+        }
+        upgradeShow('upgrade-locked');
+
+      } catch (err) {
+        console.error('Upgrade page error:', err);
+        upgradeShow('upgrade-denied');
+      }
+    })();
+  </script>
+</body>
+</html>

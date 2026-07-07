@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subscriber Portal — Contractors Bid Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="portal-shell.css" />
+  <style>
+    .portal-hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .portal-hub-card {
+      background: var(--white);
+      border: 1px solid #E5E7EB;
+      border-radius: 14px;
+      padding: 1.5rem;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .portal-hub-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+    .portal-hub-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(201,168,76,0.12);
+      color: var(--gold-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.85rem;
+    }
+    .portal-hub-card h3 { font-size: 0.98rem; color: var(--navy); margin-bottom: 0.35rem; }
+    .portal-hub-card p { font-size: 0.82rem; color: var(--gray); line-height: 1.5; }
+    .portal-hub-card .portal-nav-soon { display: inline-block; margin-top: 0.6rem; }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Loading ===== -->
+  <div id="portal-loading" class="portal-loading">
+    <div class="spinner"></div>
+    <p>Loading your portal...</p>
+  </div>
+
+  <!-- ===== Denied / no token ===== -->
+  <div id="portal-denied" class="portal-denied">
+    <div class="portal-denied-card">
+      <img src="../../assets/logo.png" alt="Contractors Bid Prep" onerror="this.style.display='none'" />
+      <h1>Portal Access Not Found</h1>
+      <p>
+        This link is missing or no longer active.<br><br>
+        If you're a CBP subscriber, check your welcome email for your unique portal link, or
+        <a href="mailto:info@contractorbidprep.com">contact our team</a> for help.
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== Portal shell ===== -->
+  <div id="portal-shell" class="portal-shell">
+
+    <header class="portal-topbar">
+      <div class="portal-topbar-inner">
+        <div class="portal-logo">
+          <img src="../../assets/logo.png" alt="CBP" onerror="this.style.display='none'" />
+          <span class="portal-logo-text">Contractors<br>Bid Prep</span>
+        </div>
+        <div class="portal-user">
+          <span id="portal-user-name" class="portal-user-name"></span>
+          <span id="portal-tier-badge" class="tier-badge"></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="portal-body">
+      <aside class="portal-sidebar">
+        <nav id="portal-nav"></nav>
+        <div class="portal-sidebar-footer">
+          <a id="portal-manage-link" href="#" class="portal-manage-link" style="display:none;">Manage Subscription</a>
+        </div>
+      </aside>
+
+      <main class="portal-main">
+        <div class="portal-page-header">
+          <h1>Welcome to the Subscriber Portal</h1>
+          <p>Everything included in your plan, in one place.</p>
+        </div>
+
+        <div class="portal-hub-grid">
+          <a class="portal-hub-card" id="hub-templates" href="#">
+            <div class="portal-hub-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+            </div>
+            <h3>Bid Templates</h3>
+            <p>Ready-to-use document templates for your bid submissions.</p>
+          </a>
+          <a class="portal-hub-card" id="hub-market-intel" href="#">
+            <div class="portal-hub-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <h3>Market Intel</h3>
+            <p>Gulf Coast procurement trends and agency spending insight.</p>
+          </a>
+          <a class="portal-hub-card" id="hub-how-tos" href="#">
+            <div class="portal-hub-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <h3>How-Tos</h3>
+            <p>Step-by-step guides for winning and fulfilling public bids.</p>
+          </a>
+          <a class="portal-hub-card" id="hub-contacts" href="#">
+            <div class="portal-hub-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3>Business Contacts</h3>
+            <p>Bonding, insurance, and subcontractor contacts for the region.</p>
+          </a>
+          <a class="portal-hub-card" id="hub-opportunities" href="#">
+            <div class="portal-hub-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <h3>Open Opportunities</h3>
+            <p>Live matched bid opportunities, searchable in the portal.</p>
+            <span class="portal-nav-soon">Coming Soon</span>
+          </a>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="portal-shell.js"></script>
+  <script>
+    cbpInitPortal(null, () => {
+      document.getElementById('hub-templates').href = cbpWithToken('/portal/templates');
+      document.getElementById('hub-market-intel').href = cbpWithToken('/portal/market-intel');
+      document.getElementById('hub-how-tos').href = cbpWithToken('/portal/how-tos');
+      document.getElementById('hub-contacts').href = cbpWithToken('/portal/contacts');
+      document.getElementById('hub-opportunities').href = cbpWithToken('/portal/opportunities');
+    });
+  </script>
+</body>
+</html>

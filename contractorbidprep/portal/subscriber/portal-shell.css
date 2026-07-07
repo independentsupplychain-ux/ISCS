@@ -1,0 +1,248 @@
+/* ============================================================
+   CBP Subscriber Portal — shared shell styles
+   Additive to ../../css/styles.css (brand tokens: --navy, --gold)
+   ============================================================ */
+
+.portal-loading {
+  min-height: 100vh;
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.portal-loading p { color: rgba(255,255,255,0.5); font-size: 0.875rem; }
+
+.portal-denied {
+  display: none;
+  min-height: 100vh;
+  background: var(--navy);
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+.portal-denied-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 3rem 2.5rem;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.portal-denied-card img { height: 56px; margin: 0 auto 1.5rem; }
+.portal-denied-card h1 { font-size: 1.3rem; color: var(--navy); margin-bottom: 0.75rem; }
+.portal-denied-card p { font-size: 0.9rem; color: #6B7280; line-height: 1.7; }
+.portal-denied-card a { color: var(--gold-dark); font-weight: 600; }
+
+.portal-shell { display: none; min-height: 100vh; flex-direction: column; background: #F8F9FB; }
+
+.portal-topbar {
+  background: var(--navy);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.portal-topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0.875rem 1.5rem;
+}
+.portal-logo { display: flex; align-items: center; gap: 0.75rem; color: var(--white); }
+.portal-logo img { height: 34px; }
+.portal-logo-text { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); }
+.portal-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(255,255,255,0.85);
+  font-size: 0.875rem;
+}
+.portal-user-name { font-weight: 600; }
+
+.tier-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+}
+.tier-bronze { background: #FEF3C7; color: #92400E; }
+.tier-silver { background: #EFF6FF; color: #1D4ED8; }
+.tier-gold   { background: #FEF9EC; color: #92400E; border: 1px solid var(--gold); }
+
+.portal-body {
+  display: flex;
+  flex: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ---- Sidebar nav ---- */
+.portal-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  padding: 1.75rem 1rem;
+  border-right: 1px solid #E5E7EB;
+}
+.portal-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 0.2rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4B5563;
+  border-left: 3px solid transparent;
+  transition: background 0.15s, color 0.15s;
+}
+.portal-nav-link svg { flex-shrink: 0; opacity: 0.7; }
+.portal-nav-link:hover { background: var(--gray-light); color: var(--navy); }
+.portal-nav-link.active {
+  background: rgba(201,168,76,0.12);
+  color: var(--navy);
+  border-left-color: var(--gold);
+}
+.portal-nav-link.active svg { opacity: 1; }
+.portal-nav-soon {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  background: rgba(201,168,76,0.15);
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  margin-left: auto;
+}
+
+.portal-sidebar-footer {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #F3F4F6;
+}
+.portal-manage-link {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gray);
+  padding: 0.5rem 0.85rem;
+  transition: color 0.15s;
+}
+.portal-manage-link:hover { color: var(--navy); }
+
+/* ---- Main content ---- */
+.portal-main { flex: 1; padding: 2rem 2rem 3rem; min-width: 0; }
+.portal-page-header { margin-bottom: 1.75rem; }
+.portal-page-header h1 { font-size: 1.6rem; color: var(--navy); margin-bottom: 0.35rem; }
+.portal-page-header p { color: var(--gray); font-size: 0.9rem; }
+
+/* ---- Generic content placeholder ---- */
+.portal-placeholder {
+  background: var(--white);
+  border: 1.5px dashed #D9DEE7;
+  border-radius: 14px;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+.portal-placeholder-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.12);
+  color: var(--gold-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+.portal-placeholder h2 { font-size: 1.05rem; color: var(--navy); margin-bottom: 0.5rem; }
+.portal-placeholder p { font-size: 0.875rem; color: var(--gray); max-width: 420px; margin: 0 auto; line-height: 1.6; }
+.portal-placeholder-tag {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+}
+
+/* ---- Tier-conditional views (Bid Templates) ---- */
+.tier-view { display: none; }
+.tier-view.active { display: block; }
+.tier-view-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--white);
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.tier-view-banner p { font-size: 0.85rem; color: #4B5563; }
+.tier-view-banner .btn { flex-shrink: 0; padding: 0.6rem 1.1rem; font-size: 0.85rem; }
+
+/* ---- Coming Soon (Open Opportunities) ---- */
+.coming-soon-card {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  border-radius: 16px;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  color: var(--white);
+}
+.coming-soon-badge {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--navy-dark);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+.coming-soon-card h2 { font-size: 1.5rem; margin-bottom: 0.75rem; }
+.coming-soon-card p { color: rgba(255,255,255,0.75); max-width: 480px; margin: 0 auto; line-height: 1.65; }
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(201,168,76,0.25);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 860px) {
+  .portal-body { flex-direction: column; }
+  .portal-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #E5E7EB;
+    padding: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+  .portal-sidebar-footer { display: none; }
+  .portal-main { padding: 1.5rem 1.25rem 2.5rem; }
+}
