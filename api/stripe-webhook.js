@@ -91,6 +91,23 @@ contractorbidprep.com`,
 const OPPORTUNITIES_DB_ID = 'dc9a3b8c-3f94-4f9c-a405-947e7f0f900f';
 const MAX_BID_ITEMS_IN_EMAIL = 20;
 
+// DemandStar's /app/suppliers/... bid links require a login. The
+// /app/limited/... path serves the same bid details without one, so
+// email recipients can open a link without hitting a login wall.
+function toPublicDemandStarLink(url) {
+  if (!url) return url;
+  try {
+    const u = new URL(url);
+    if (u.hostname.endsWith('demandstar.com')) {
+      u.pathname = u.pathname.replace('/app/suppliers/bids/', '/app/limited/bids/');
+      return u.toString();
+    }
+  } catch {
+    // Not a valid absolute URL — leave it untouched.
+  }
+  return url;
+}
+
 async function fetchBidOpportunities() {
   const notionKey = process.env.NOTION_API_KEY;
   const response = await fetch(`https://api.notion.com/v1/databases/${OPPORTUNITIES_DB_ID}/query`, {
@@ -116,7 +133,7 @@ async function fetchBidOpportunities() {
       agency_name:       p['Agency']?.rich_text?.map(t => t.plain_text).join('') || '',
       due_date:          p['Due Date']?.date?.start || '',
       estimated_value:   p['Estimated Value']?.number ?? '',
-      portal_link:       p['Portal Link']?.url || '',
+      portal_link:       toPublicDemandStarLink(p['Portal Link']?.url || ''),
     };
   });
 }
